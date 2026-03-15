@@ -419,7 +419,6 @@ function renderHotspots(){
     });
     const m=L.marker([h.lat,h.lng],{icon})
       .bindPopup(makeHotPopup(h),{maxWidth:300})
-      .on('click',()=>{})
       .addTo(map);
     hotMarkers[h.id]=m;
   });
@@ -501,6 +500,7 @@ function renderLiveHotMarkers(){
       iconSize:[sz,sz],iconAnchor:[sz/2,sz/2]
     });
     const m=L.marker([h.lat,h.lng],{icon})
+      .bindPopup(makeHotPopup(h),{maxWidth:300})
       .on('click',()=>clickScHotspot(h.id))
       .addTo(map);
     hotMarkers[h.id]=m;
@@ -515,8 +515,6 @@ function renderLiveHotMarkers(){
 function clickScHotspot(id){
   const h=HOTSPOTS.find(x=>x.id===id);
   if(!h)return;
-  // Open popup without zooming
-  if(hotMarkers[id]) hotMarkers[id].openPopup();
   currentLat=h.lat; currentLng=h.lng; currentRadius=100;
   document.getElementById('listTitle').textContent='📡 '+h.name;
   document.querySelectorAll('#scNavChips .chip').forEach(c=>c.classList.remove('active'));
