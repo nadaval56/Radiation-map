@@ -392,10 +392,19 @@ function setMode(m){
     renderHotspots();
     buildHotList();
   } else {
-    clearHotMarkers(); // hide hotspots completely in live mode
+    clearHotMarkers();
     buildLocChips();
     buildRadChips();
-    loadLive();
+    // Don't auto-load — let user choose location
+    document.getElementById('mainList').innerHTML=
+      `<div class="empty" style="padding:24px 12px;color:var(--ink3);text-align:center">
+        <div style="font-size:24px;margin-bottom:10px">📍</div>
+        <div style="font-size:13px;font-weight:600">בחר מיקום מהירים<br>או חפש עיר כדי לטעון נתונים</div>
+      </div>`;
+    document.getElementById('listCount').textContent='0';
+    document.getElementById('statusBar').className='status-bar';
+    document.getElementById('sIcon').textContent='';
+    document.getElementById('sMsg').textContent='בחר מיקום';
   }
 }
 
@@ -482,8 +491,8 @@ function setCat(cat,el){
 // LIVE
 function clearLiveMarkers(){liveMarkers.forEach(m=>map.removeLayer(m));liveMarkers=[];}
 function buildLocChips(){
-  document.getElementById('locChips').innerHTML=QUICK_LOCS.map((l,i)=>
-    `<button class="chip${i===0?' active':''}" onclick="selectLoc(${l.lat},${l.lng},this)">${l.name}</button>`
+  document.getElementById('locChips').innerHTML=QUICK_LOCS.map(l=>
+    `<button class="chip" onclick="selectLoc(${l.lat},${l.lng},this)">${l.name}</button>`
   ).join('');
 }
 function buildRadChips(){
