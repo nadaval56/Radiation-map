@@ -420,7 +420,7 @@ function renderHotspots(faded){
     });
     const m=L.marker([h.lat,h.lng],{icon})
       .bindPopup(makeHotPopup(h),{maxWidth:300})
-      .on('click',()=>selectHot(h.id))
+      .on('click',()=>{}) // popup opens automatically on click
       .addTo(map);
     hotMarkers[h.id]=m;
   });
@@ -447,16 +447,9 @@ function makeHotPopup(h){
   </div>`;
 }
 
-function selectHot(id){
-  selectedHot=id;
-  document.querySelectorAll('.m-item').forEach(el=>el.classList.toggle('sel',el.dataset.id==id));
-}
 function jumpToHot(id){
   const h=HOTSPOTS.find(x=>x.id===id);
-  if(!h)return;
-  selectHot(id);
-  if(h.lat===20&&h.lng===10){return;} // ISS
-  if(!hotMarkers[id])return;
+  if(!h||!hotMarkers[id])return;
   map.flyTo([h.lat,h.lng],10,{duration:1.2});
   setTimeout(()=>hotMarkers[id].openPopup(),1300);
 }
@@ -465,7 +458,7 @@ function buildHotList(){
   document.getElementById('listCount').textContent=filtered.length;
   document.getElementById('mainList').innerHTML=filtered.map(h=>{
     const c=CAT_COL[h.cat]||'#1A1916';
-    return`<div class="m-item${selectedHot===h.id?' sel':''}" data-id="${h.id}" onclick="jumpToHot(${h.id})">
+    return`<div class="m-item" data-id="${h.id}" onclick="jumpToHot(${h.id})">
       <div class="m-icon" style="background:${c}18">${h.icon}</div>
       <div style="flex:1;min-width:0">
         <div class="m-name">${h.name}</div>
@@ -645,7 +638,6 @@ document.head.appendChild(style);
 buildCatChips();
 renderHotspots();
 buildHotList();
-setTimeout(()=>jumpToHot(4),400);
 
 // Pre-warm Render proxy in background (free tier sleeps)
 setTimeout(()=>fetch(PROXY+'/').catch(()=>{}), 1000);
