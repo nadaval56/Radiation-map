@@ -116,31 +116,40 @@ header{grid-area:hdr;display:flex;align-items:center;justify-content:space-betwe
     display:flex;flex-direction:column;
     height:100dvh;overflow:hidden;
   }
-  header{
-    flex-shrink:0;padding:0 14px;
-  }
+  header{ flex-shrink:0;padding:0 14px; }
   .logo-sub{display:none}
   .panel{
     grid-area:unset;border-left:none;
     flex-shrink:0;overflow:visible;
-    max-height:none;
   }
-  /* On mobile show only the controls, not the list */
   .panel > .list-hdr,
   .panel > .list-scroll{ display:none }
-  /* Collapsible sections — only show tabs + active section */
   .sec{ padding:9px 12px; }
-
   #map{
     grid-area:unset;
     flex-shrink:0;
-    height:42vh;
-    min-height:180px;
+    height:38vh;
+    min-height:160px;
   }
-
-  /* Mobile list appears BELOW the map */
+  /* Single scrollable zone below the map */
+  #mobileScroll{
+    flex:1;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    background:var(--bg);
+    display:flex;
+    flex-direction:column;
+  }
+  #mobilePopup{
+    flex-shrink:0;
+    background:white;
+    border-top:3px solid var(--ink3);
+    padding:14px 16px;
+    box-shadow:0 -2px 12px rgba(26,25,22,0.10);
+    position:relative;
+  }
   #mobileList{
-    flex:1;overflow-y:auto;
+    flex:1;
     background:var(--bg);
     border-top:1px solid var(--bg2);
     padding:6px 10px 20px;
@@ -148,7 +157,7 @@ header{grid-area:hdr;display:flex;align-items:center;justify-content:space-betwe
   #mobileList .list-hdr-m{
     display:flex;justify-content:space-between;align-items:center;
     padding:8px 4px 6px;
-    position:sticky;top:0;background:var(--bg);z-index:10;
+    background:var(--bg);
   }
   #mobileList .m-item{margin-bottom:2px}
 }
@@ -156,8 +165,7 @@ header{grid-area:hdr;display:flex;align-items:center;justify-content:space-betwe
   .leaflet-popup{ display:none !important; }
 }
 @media (min-width: 701px){
-  #mobileList{display:none}
-  #mobilePopup{display:none !important}
+  #mobileScroll{display:none !important}
 }
 .leaflet-tile-pane{filter:grayscale(12%) brightness(1.02)}
 .leaflet-control-zoom{border:none!important;box-shadow:var(--shadow)!important;
@@ -281,23 +289,24 @@ header{grid-area:hdr;display:flex;align-items:center;justify-content:space-betwe
 
 <div id="map"></div>
 
-<!-- Mobile list — shown below map on small screens -->
-<div id="mobileList" style="display:none">
-  <div class="list-hdr-m">
-    <span class="lbl" style="margin-bottom:0" id="mobileListTitle">נקודות עניין</span>
-    <span class="count-badge" id="mobileListCount">0</span>
+<!-- Mobile scrollable zone — popup + list, below the map -->
+<div id="mobileScroll">
+  <!-- Popup card -->
+  <div id="mobilePopup" style="display:none;position:relative">
+    <button onclick="closeMobilePopup()" style="position:absolute;top:10px;left:12px;
+      background:var(--bg2);border:none;border-radius:8px;padding:3px 9px;
+      font-size:13px;cursor:pointer;color:var(--ink2)">✕</button>
+    <div id="mobilePopupInner"></div>
   </div>
-  <div id="mobileListInner"></div>
-</div>
 
-<!-- Mobile popup card — appears below map instead of overlaying it -->
-<div id="mobilePopup" style="display:none;flex-shrink:0;background:white;
-  border-top:3px solid var(--ink3);padding:14px 16px;
-  box-shadow:0 -4px 20px rgba(26,25,22,0.12);position:relative">
-  <button onclick="closeMobilePopup()" style="position:absolute;top:10px;left:12px;
-    background:var(--bg2);border:none;border-radius:8px;padding:3px 9px;
-    font-size:13px;cursor:pointer;color:var(--ink2)">✕</button>
-  <div id="mobilePopupInner"></div>
+  <!-- List -->
+  <div id="mobileList">
+    <div class="list-hdr-m">
+      <span class="lbl" style="margin-bottom:0" id="mobileListTitle">נקודות עניין</span>
+      <span class="count-badge" id="mobileListCount">0</span>
+    </div>
+    <div id="mobileListInner"></div>
+  </div>
 </div>
 
 <script>
@@ -741,32 +750,27 @@ function showMobilePopup(html){
   const el=document.getElementById('mobilePopup');
   document.getElementById('mobilePopupInner').innerHTML=html;
   el.style.display='block';
-  // Shrink map to make room
-  document.getElementById('map').style.height='30vh';
-  map.invalidateSize();
+  // Scroll to top of the scrollable zone so popup is visible
+  document.getElementById('mobileScroll').scrollTop=0;
 }
 function closeMobilePopup(){
   document.getElementById('mobilePopup').style.display='none';
-  document.getElementById('map').style.height='42vh';
-  map.invalidateSize();
 }
 
 // ── MOBILE SYNC ──
 function isMobile(){ return window.innerWidth <= 700; }
 
 function syncMobileList(){
-  const ml=document.getElementById('mobileList');
-  if(!ml) return;
-  ml.style.display = isMobile() ? 'flex' : 'none';
   if(!isMobile()) return;
-  ml.style.flexDirection='column';
-  // Mirror content from desktop list
   const title=document.getElementById('listTitle');
   const count=document.getElementById('listCount');
   const inner=document.getElementById('mainList');
-  document.getElementById('mobileListTitle').textContent=title?title.textContent:'';
-  document.getElementById('mobileListCount').textContent=count?count.textContent:'0';
-  document.getElementById('mobileListInner').innerHTML=inner?inner.innerHTML:'';
+  const t=document.getElementById('mobileListTitle');
+  const c=document.getElementById('mobileListCount');
+  const i=document.getElementById('mobileListInner');
+  if(t) t.textContent=title?title.textContent:'';
+  if(c) c.textContent=count?count.textContent:'0';
+  if(i) i.innerHTML=inner?inner.innerHTML:'';
 }
 
 // INIT
