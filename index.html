@@ -251,9 +251,9 @@ const HOTSPOTS=[
   {id:10, name:'סאפורו',               country:'יפן',      lat:43.061,  lng:141.354, nsvh:60,     cat:'normal',   icon:'❄', year:2022, source:'Safecast',        sc:true, note:'איי הוקאידו — רחוק מפוקושימה.'},
 
   // אירופה
-  {id:11, name:'פריז',                 country:'צרפת',     lat:48.857,  lng:2.347,   nsvh:90,     cat:'normal',   icon:'🗼', year:2023, source:'IRSN',           note:'~70% מחשמל צרפת מאנרגיה גרעינית — ללא תאונות.'},
+  {id:11, name:'פריז',                 country:'צרפת',     lat:48.857,  lng:2.347,   nsvh:90,     cat:'normal',   icon:'🗼', year:2023, source:'IRSN', sc:true,          note:'~70% מחשמל צרפת מאנרגיה גרעינית — ללא תאונות.'},
   {id:12, name:'מרסיי',                country:'צרפת',     lat:43.296,  lng:5.381,   nsvh:85,     cat:'normal',   icon:'⚓', year:2022, source:'IRSN',           note:'חוף הים התיכון. קרינה נמוכה.'},
-  {id:13, name:'לונדון',               country:'בריטניה',  lat:51.507,  lng:-0.128,  nsvh:100,    cat:'normal',   icon:'💂', year:2022, source:'PHE',            note:'15 כורים גרעיניים פעילים בבריטניה.'},
+  {id:13, name:'לונדון',               country:'בריטניה',  lat:51.507,  lng:-0.128,  nsvh:100,    cat:'normal',   icon:'💂', year:2022, source:'PHE', sc:true,           note:'15 כורים גרעיניים פעילים בבריטניה.'},
   {id:14, name:'מינכן',                country:'גרמניה',   lat:48.137,  lng:11.576,  nsvh:120,    cat:'normal',   icon:'🍺', year:2023, source:'BfR',            note:'גרמניה סגרה את כל כוריה ב-2023.'},
   {id:15, name:'ברלין',                country:'גרמניה',   lat:52.520,  lng:13.405,  nsvh:110,    cat:'normal',   icon:'🐻', year:2023, source:'BfR',            note:'נמוך ויציב.'},
   {id:16, name:'מדריד',                country:'ספרד',     lat:40.416,  lng:-3.704,  nsvh:95,     cat:'normal',   icon:'🐂', year:2023, source:'CSN',            note:'9 כורים פעילים בספרד.'},
@@ -276,13 +276,13 @@ const HOTSPOTS=[
   {id:31, name:'ביידה — ירדן',         country:'ירדן',     lat:29.534,  lng:35.006,  nsvh:80,     cat:'normal',   icon:'🏜', year:2021, source:'JNRC',           note:'ירדן בונה תוכנית גרעינית אזרחית.'},
 
   // ארה״ב
-  {id:32, name:'ניו יורק',             country:'ארה״ב',    lat:40.712,  lng:-74.006, nsvh:95,     cat:'normal',   icon:'🗽', year:2023, source:'EPA RadNet',      note:'ממוצע עירוני, גובה פני הים.'},
-  {id:33, name:'לוס אנג׳לס',          country:'ארה״ב',    lat:34.052,  lng:-118.244,nsvh:90,     cat:'normal',   icon:'🎬', year:2023, source:'EPA RadNet',      note:'ממוצע עירוני.'},
-  {id:34, name:'שיקגו',                country:'ארה״ב',    lat:41.878,  lng:-87.630, nsvh:100,    cat:'normal',   icon:'🌬', year:2023, source:'EPA RadNet',      note:'ממוצע עירוני.'},
-  {id:35, name:'דנבר, קולורדו',        country:'ארה״ב',    lat:39.739,  lng:-104.984,nsvh:320,    cat:'elevated', icon:'🏔', year:2023, source:'EPA RadNet',      note:'גובה 1600 מ׳ + גרניט = גבוה טבעית. תושבים בריאים לחלוטין.'},
+  {id:32, name:'ניו יורק',             country:'ארה״ב',    lat:40.712,  lng:-74.006, nsvh:95,     cat:'normal',   icon:'🗽', year:2023, source:'EPA RadNet', sc:true, note:'ממוצע עירוני, גובה פני הים.'},
+  {id:33, name:'לוס אנג׳לס',          country:'ארה״ב',    lat:34.052,  lng:-118.244,nsvh:90,     cat:'normal',   icon:'🎬', year:2023, source:'EPA RadNet', sc:true, note:'ממוצע עירוני.'},
+  {id:34, name:'שיקגו',                country:'ארה״ב',    lat:41.878,  lng:-87.630, nsvh:100,    cat:'normal',   icon:'🌬', year:2023, source:'EPA RadNet', sc:true, note:'ממוצע עירוני.'},
+  {id:35, name:'דנבר, קולורדו',        country:'ארה״ב',    lat:39.739,  lng:-104.984,nsvh:320,    cat:'elevated', icon:'🏔', year:2023, source:'EPA RadNet', sc:true, note:'גובה 1600 מ׳ + גרניט = גבוה טבעית. תושבים בריאים לחלוטין.'},
   {id:36, name:'סולט לייק סיטי',       country:'ארה״ב',    lat:40.760,  lng:-111.891,nsvh:280,    cat:'elevated', icon:'🏔', year:2023, source:'EPA',            note:'גובה 1300 מ׳ + סלע גרניטי.'},
   {id:37, name:'אתר ניסויי נבדה',      country:'ארה״ב',    lat:37.120,  lng:-116.050,nsvh:1200,   cat:'elevated', icon:'💥', year:2021, source:'DOE/NNSA',       note:'928 ניסויי גרעין בין 1951–1992. ניטור שוטף של DOE.'},
-  {id:38, name:'הנפורד, וושינגטון',    country:'ארה״ב',    lat:46.551,  lng:-119.488,nsvh:850,    cat:'elevated', icon:'⚗', year:2022, source:'DOE',            note:'אתר ייצור פלוטוניום לנשק גרעיני (מנהטן פרויקט). ניקוי נמשך.'},
+  {id:38, name:'הנפורד, וושינגטון',    country:'ארה״ב',    lat:46.551,  lng:-119.488,nsvh:850,    cat:'elevated', icon:'⚗', year:2022, source:'DOE', sc:true,            note:'אתר ייצור פלוטוניום לנשק גרעיני (מנהטן פרויקט). ניקוי נמשך.'},
   {id:39, name:'סנטה פה, ניו מקסיקו', country:'ארה״ב',    lat:35.687,  lng:-105.938,nsvh:340,    cat:'elevated', icon:'🎨', year:2023, source:'EPA',            note:'גובה 2100 מ׳. גבוה טבעית.'},
 
   // קרינה טבעית גבוהה
