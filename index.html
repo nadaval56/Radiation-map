@@ -808,36 +808,38 @@ async function fetchData(lat, lng) {
 
   const base = 'https://api.safecast.org/measurements.json?latitude=' + lat + '&longitude=' + lng + '&distance=' + currentRadius + '&limit=500';
 
-  // Safecast blocks direct browser fetch (no CORS headers) — must use proxy
   const tries = [
-    { name: 'proxy1', url: 'https://corsproxy.io/?' + encodeURIComponent(base) },
-    { name: 'proxy2', url: 'https://api.allorigins.win/get?url=' + encodeURIComponent(base) },
-    { name: 'direct', url: base },
+    { name: 'direct',  url: base, wrap: false },
+    { name: 'proxy1',  url: 'https://corsproxy.io/?' + encodeURIComponent(base), wrap: false },
+    { name: 'proxy2',  url: 'https://api.allorigins.win/get?url=' + encodeURIComponent(base), wrap: true },
+    { name: 'proxy3',  url: 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(base), wrap: false },
+    { name: 'proxy4',  url: 'https://thingproxy.freeboard.io/fetch/' + base, wrap: false },
   ];
 
   let data = null;
 
   for (let i = 0; i < tries.length; i++) {
-    const { name, url } = tries[i];
+    const { name, url, wrap } = tries[i];
     try {
-      setStatus('', 'מתחבר... (' + (i+1) + '/3)', '#B0AFA9');
+      setStatus('', '(' + (i+1) + '/' + tries.length + ') מנסה ' + name + '...', '#B0AFA9');
       const ctrl = new AbortController();
-      const t = setTimeout(() => ctrl.abort(), 14000);
+      const t = setTimeout(() => ctrl.abort(), 20000);
       const res = await fetch(url, { signal: ctrl.signal });
       clearTimeout(t);
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const json = await res.json();
-      // allorigins wraps in {contents: "..."}
-      const parsed = name === 'proxy2' ? JSON.parse(json.contents) : json;
+      const parsed = wrap ? JSON.parse(json.contents) : json;
       if (Array.isArray(parsed) && parsed.length > 0) { data = parsed; break; }
-    } catch(e) { /* try next */ }
+    } catch(e) {
+      console.warn(name + ' failed:', e.message);
+    }
   }
 
   setLoading(false);
 
   if (!data || !data.length) {
-    setStatus('✗', 'לא הגיעו נתונים — נסה שוב', '#E8413B');
-    showEmpty('כל 3 נתיבי החיבור נכשלו.\nהAPI עובד (בדק ישירות בדפדפן):\n' + base);
+    setStatus('✗', 'כל ' + tries.length + ' הנסיונות נכשלו', '#E8413B');
+    showEmpty('פתח F12 → Console כדי לראות את השגיאות המדויקות.\n\nURL ישיר לבדיקה:\n' + base);
     return;
   }
 
