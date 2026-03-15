@@ -237,12 +237,12 @@ const PROXY='https://safecast-proxy.onrender.com';
 // ── HOTSPOTS ──
 const HOTSPOTS=[
   // אסונות גרעיניים
-  {id:1,  name:'כור צ׳רנוביל',        country:'אוקראינה', lat:51.389,  lng:30.099,  nsvh:160000, cat:'disaster', icon:'☢', year:2021, source:'IAEA',           note:'ממוצע באתר הכור עצמו. ערכי שיא ביערות האדומים עשרות מיליונים.'},
-  {id:2,  name:'יער אדום',             country:'אוקראינה', lat:51.402,  lng:30.068,  nsvh:500000, cat:'disaster', icon:'🌲', year:2020, source:'Ukrainian State', note:'העצים הפכו חום-כתום מהקרינה ב-1986. אחד האזורים המזוהמים ביותר.'},
-  {id:3,  name:'פריפיאט',              country:'אוקראינה', lat:51.407,  lng:30.054,  nsvh:8000,   cat:'disaster', icon:'🏚', year:2019, source:'Safecast', sc:true,        note:'עיר רפאים שפונתה ב-1986. 50,000 תושבים עזבו תוך שעות.'},
-  {id:4,  name:'כור פוקושימה דאיצ׳י', country:'יפן',      lat:37.421,  lng:141.032, nsvh:105000, cat:'disaster', icon:'⚡', year:2022, source:'Safecast/TEPCO', sc:true,  note:'אסון מרץ 2011 — צונאמי השבית את מערכות הקירור.'},
-  {id:5,  name:'נאמיה — אזור פינוי',  country:'יפן',      lat:37.480,  lng:141.000, nsvh:3500,   cat:'disaster', icon:'🚧', year:2021, source:'Safecast', sc:true,        note:'פונתה לאחר פוקושימה. חלק מהתושבים חזרו לאחר הורדת הקרינה.'},
-  {id:6,  name:'אוקומה',               country:'יפן',      lat:37.400,  lng:141.020, nsvh:12000,  cat:'disaster', icon:'🏘', year:2020, source:'Safecast', sc:true,        note:'אחת הערים שפונתה — צמוד לכור. אזור פינוי עד 2019.'},
+  {id:1,  name:'כור צ׳רנוביל',        country:'אוקראינה', lat:51.389,  lng:30.099,  nsvh:160000, cat:'disaster', icon:'☢', year:2021, source:'IAEA', reason:'פיצוץ כור RBMS-1000 ב-26.4.1986 — השחרור הגדול ביותר של חומרים רדיואקטיביים בהיסטוריה.',,           note:'ממוצע באתר הכור עצמו. ערכי שיא ביערות האדומים עשרות מיליונים.'},
+  {id:2,  name:'יער אדום',             country:'אוקראינה', lat:51.402,  lng:30.068,  nsvh:500000, cat:'disaster', icon:'🌲', year:2020, source:'Ukrainian State', reason:'הנשורת מהפיצוץ ספגה את העצים — הם הפכו חום-אדום ומתו. האדמה עדיין מזוהמת בסיזיום-137 ופלוטוניום.',, note:'העצים הפכו חום-כתום מהקרינה ב-1986. אחד האזורים המזוהמים ביותר.'},
+  {id:3,  name:'פריפיאט',              country:'אוקראינה', lat:51.407,  lng:30.054,  nsvh:8000,   cat:'disaster', icon:'🏚', year:2019, source:'Safecast', sc:true, reason:'שאריות נשורת צ׳רנוביל — בעיקר סיזיום-137 בקרקע. הקרינה ירדה פי 10 מ-1986 אך עדיין גבוהה.',,        note:'עיר רפאים שפונתה ב-1986. 50,000 תושבים עזבו תוך שעות.'},
+  {id:4,  name:'כור פוקושימה דאיצ׳י', country:'יפן',      lat:37.421,  lng:141.032, nsvh:105000, cat:'disaster', icon:'⚡', year:2022, source:'Safecast/TEPCO', reason:'תאונת הכור מרץ 2011. צונאמי השבית מערכות קירור — שחרור סיזיום-137 ויוד-131.', sc:true,  note:'אסון מרץ 2011 — צונאמי השבית את מערכות הקירור.'},
+  {id:5,  name:'נאמיה — אזור פינוי',  country:'יפן',      lat:37.480,  lng:141.000, nsvh:3500,   cat:'disaster', icon:'🚧', year:2021, source:'Safecast', reason:'זיהום מאסון פוקושימה 2011. סיזיום-137 בקרקע ובצמחייה. ניקוי ממשיך.', sc:true,        note:'פונתה לאחר פוקושימה. חלק מהתושבים חזרו לאחר הורדת הקרינה.'},
+  {id:6,  name:'אוקומה',               country:'יפן',      lat:37.400,  lng:141.020, nsvh:12000,  cat:'disaster', icon:'🏘', year:2020, source:'Safecast', sc:true, reason:'הסמוכה לכור פוקושימה — זיהום קרקע חמור. פונתה 2011, נפתחה חלקית רק ב-2019.',,        note:'אחת הערים שפונתה — צמוד לכור. אזור פינוי עד 2019.'},
 
   // נורמלי — יפן
   {id:7,  name:'טוקיו',                country:'יפן',      lat:35.690,  lng:139.700, nsvh:68,     cat:'normal',   icon:'🗼', year:2023, source:'Safecast', sc:true,        note:'חזר לנורמה לאחר 2011. ממוצע עירוני יציב.'},
@@ -265,8 +265,8 @@ const HOTSPOTS=[
   {id:22, name:'הלסינקי',              country:'פינלנד',   lat:60.192,  lng:24.945,  nsvh:180,    cat:'normal',   icon:'🇫🇮', year:2023, source:'STUK',          note:'גרניט + רדון = גבוה יחסית. 2 כורים בלוביילה.'},
   {id:23, name:'שטוקהולם',             country:'שוודיה',   lat:59.330,  lng:18.069,  nsvh:140,    cat:'normal',   icon:'👑', year:2023, source:'SSM',            note:'שוודיה עם 6 כורים פעילים.'},
   {id:24, name:'זינובייבסק',           country:'אוקראינה', lat:48.507,  lng:32.262,  nsvh:95,     cat:'normal',   icon:'🔆', year:2022, source:'SNRIU',          note:'ליד תחנת הכוח גרעינית הגדולה בעולם — זפוריז׳יה.'},
-  {id:25, name:'זפוריז׳יה',            country:'אוקראינה', lat:47.838,  lng:35.139,  nsvh:210,    cat:'elevated', icon:'⚠', year:2023, source:'IAEA',            note:'תחנת הכוח הגדולה בעולם (6 כורים) — נמצאת בשטח כיבוש.'},
-  {id:26, name:'סלאפיל — ליד צ׳רנוביל',country:'בלרוס',  lat:51.838,  lng:30.511,  nsvh:4500,   cat:'disaster', icon:'🌿', year:2020, source:'IAEA',            note:'בלרוס קיבלה ~70% מהנשורת של צ׳רנוביל.'},
+  {id:25, name:'זפוריז׳יה',            country:'אוקראינה', lat:47.838,  lng:35.139,  nsvh:210,    cat:'elevated', icon:'⚠', year:2023, source:'IAEA', reason:'6 כורים גרעיניים פעילים + מצב מלחמה — ה-IAEA מאזהרת מסיכון לתאונה גרעינית.',,            note:'תחנת הכוח הגדולה בעולם (6 כורים) — נמצאת בשטח כיבוש.'},
+  {id:26, name:'סלאפיל — ליד צ׳רנוביל',country:'בלרוס',  lat:51.838,  lng:30.511,  nsvh:4500,   cat:'disaster', icon:'🌿', year:2020, source:'IAEA', reason:'70% מנשורת צ׳רנוביל נפלה על בלרוס. הקרקע מזוהמת בסיזיום-137.',            note:'בלרוס קיבלה ~70% מהנשורת של צ׳רנוביל.'},
 
   // ישראל ואזור
   {id:27, name:'תל אביב',              country:'ישראל',    lat:32.080,  lng:34.780,  nsvh:70,     cat:'normal',   icon:'🌊', year:2020, source:'IAEA',           note:'נמוך — חוף הים התיכון, גובה פני הים.'},
@@ -279,16 +279,16 @@ const HOTSPOTS=[
   {id:32, name:'ניו יורק',             country:'ארה״ב',    lat:40.712,  lng:-74.006, nsvh:95,     cat:'normal',   icon:'🗽', year:2023, source:'EPA RadNet', sc:true, note:'ממוצע עירוני, גובה פני הים.'},
   {id:33, name:'לוס אנג׳לס',          country:'ארה״ב',    lat:34.052,  lng:-118.244,nsvh:90,     cat:'normal',   icon:'🎬', year:2023, source:'EPA RadNet', sc:true, note:'ממוצע עירוני.'},
   {id:34, name:'שיקגו',                country:'ארה״ב',    lat:41.878,  lng:-87.630, nsvh:100,    cat:'normal',   icon:'🌬', year:2023, source:'EPA RadNet', sc:true, note:'ממוצע עירוני.'},
-  {id:35, name:'דנבר, קולורדו',        country:'ארה״ב',    lat:39.739,  lng:-104.984,nsvh:320,    cat:'elevated', icon:'🏔', year:2023, source:'EPA RadNet', sc:true, note:'גובה 1600 מ׳ + גרניט = גבוה טבעית. תושבים בריאים לחלוטין.'},
-  {id:36, name:'סולט לייק סיטי',       country:'ארה״ב',    lat:40.760,  lng:-111.891,nsvh:280,    cat:'elevated', icon:'🏔', year:2023, source:'EPA',            note:'גובה 1300 מ׳ + סלע גרניטי.'},
-  {id:37, name:'אתר ניסויי נבדה',      country:'ארה״ב',    lat:37.120,  lng:-116.050,nsvh:1200,   cat:'elevated', icon:'💥', year:2021, source:'DOE/NNSA',       note:'928 ניסויי גרעין בין 1951–1992. ניטור שוטף של DOE.'},
-  {id:38, name:'הנפורד, וושינגטון',    country:'ארה״ב',    lat:46.551,  lng:-119.488,nsvh:850,    cat:'elevated', icon:'⚗', year:2022, source:'DOE', sc:true,            note:'אתר ייצור פלוטוניום לנשק גרעיני (מנהטן פרויקט). ניקוי נמשך.'},
+  {id:35, name:'דנבר, קולורדו',        country:'ארה״ב',    lat:39.739,  lng:-104.984,nsvh:320,    cat:'elevated', icon:'🏔', year:2023, source:'EPA RadNet', reason:'גובה 1600 מ׳ = פחות אטמוספרה = יותר קרינה קוסמית. גם גרניט עשיר ברדון.', sc:true, note:'גובה 1600 מ׳ + גרניט = גבוה טבעית. תושבים בריאים לחלוטין.'},
+  {id:36, name:'סולט לייק סיטי',       country:'ארה״ב',    lat:40.760,  lng:-111.891,nsvh:280,    cat:'elevated', icon:'🏔', year:2023, source:'EPA', reason:'גובה 1300 מ׳ + סלע גרניטי עשיר באורניום.',            note:'גובה 1300 מ׳ + סלע גרניטי.'},
+  {id:37, name:'אתר ניסויי נבדה',      country:'ארה״ב',    lat:37.120,  lng:-116.050,nsvh:1200,   cat:'elevated', icon:'💥', year:2021, source:'DOE/NNSA', reason:'928 ניסויי גרעין בין 1951–1992 — 100 מתחת לאדמה, 828 באוויר. הקרקע עדיין מזוהמת בפלוטוניום.',,       note:'928 ניסויי גרעין בין 1951–1992. ניטור שוטף של DOE.'},
+  {id:38, name:'הנפורד, וושינגטון',    country:'ארה״ב',    lat:46.551,  lng:-119.488,nsvh:850,    cat:'elevated', icon:'⚗', year:2022, source:'DOE', reason:'ייצור פלוטוניום 1943–1987. 177 מיכלי פסולת גרעינית — חלקם דולפים.', sc:true,            note:'אתר ייצור פלוטוניום לנשק גרעיני (מנהטן פרויקט). ניקוי נמשך.'},
   {id:39, name:'סנטה פה, ניו מקסיקו', country:'ארה״ב',    lat:35.687,  lng:-105.938,nsvh:340,    cat:'elevated', icon:'🎨', year:2023, source:'EPA',            note:'גובה 2100 מ׳. גבוה טבעית.'},
 
   // קרינה טבעית גבוהה
-  {id:40, name:'ראמסר',                country:'איראן',    lat:36.910,  lng:50.658,  nsvh:260000, cat:'natural',  icon:'🌋', year:2020, source:'UNSCEAR',        note:'הגבוה ביותר בעולם מקרינה טבעית! מי תהום עשירים ברדיום. מחקרים: תושבים בריאים.'},
-  {id:41, name:'קרלה',                 country:'הודו',     lat:9.980,   lng:76.330,  nsvh:15000,  cat:'natural',  icon:'🏝', year:2019, source:'AERB',           note:'חוף עם מינרל מונזייט. אוכלוסייה גדולה חיה שם דורות.'},
-  {id:42, name:'גואראפארי',            country:'ברזיל',    lat:-20.676, lng:-40.502, nsvh:18000,  cat:'natural',  icon:'🌴', year:2021, source:'IAEA',           note:'חוף ים עם חול מונזייט. אחד הגבוהים בעולם.'},
+  {id:40, name:'ראמסר',                country:'איראן',    lat:36.910,  lng:50.658,  nsvh:260000, cat:'natural',  icon:'🌋', year:2020, source:'UNSCEAR', reason:'מי תהום עולים דרך שכבת גיר עשירה בראדיום-226. ריכוז הרדון בבתים גבוה פי 200 מהממוצע העולמי.',,        note:'הגבוה ביותר בעולם מקרינה טבעית! מי תהום עשירים ברדיום. מחקרים: תושבים בריאים.'},
+  {id:41, name:'קרלה',                 country:'הודו',     lat:9.980,   lng:76.330,  nsvh:15000,  cat:'natural',  icon:'🏝', year:2019, source:'AERB', reason:'חול מונזייט (מינרל עם תוריום ואורניום) שנפוץ לאורך החוף. קרינה גמא גבוהה מהרקע.',,           note:'חוף עם מינרל מונזייט. אוכלוסייה גדולה חיה שם דורות.'},
+  {id:42, name:'גואראפארי',            country:'ברזיל',    lat:-20.676, lng:-40.502, nsvh:18000,  cat:'natural',  icon:'🌴', year:2021, source:'IAEA', reason:'חוף חול שחור — מונזייט עשיר בתוריום. 1 מתוך 3 תושבים עובד בסמוך לקרינה גבוהה יומית.',,           note:'חוף ים עם חול מונזייט. אחד הגבוהים בעולם.'},
   {id:43, name:'פוצ׳ון',               country:'סין',      lat:29.490,  lng:106.560, nsvh:3500,   cat:'natural',  icon:'🐼', year:2019, source:'CAEA',           note:'אזור עם פצרוזיט — מינרל רדיואקטיבי טבעי.'},
   {id:44, name:'מחוז גאנגנו',          country:'סין',      lat:24.210,  lng:108.970, nsvh:6800,   cat:'natural',  icon:'🏞', year:2020, source:'CAEA',           note:'אבן גרניט עשירה בחמרים רדיואקטיביים טבעיים.'},
 
@@ -442,6 +442,8 @@ function makeHotPopup(h){
     </div>
     <div class="pu-badge" style="background:${c}18;color:${c}">${getLabel(h.nsvh)}</div>
     ${xray?`<div class="pu-compare">${xray}</div>`:''}
+    ${h.reason?`<div class="pu-compare" style="background:#fff8e6;color:#7a5200;border-right:3px solid #F5A623;padding-right:10px">
+      <b>⚠ סיבת הקרינה:</b><br>${h.reason}</div>`:''}
     <div class="pu-note">${h.note}</div>
   </div>`;
 }
@@ -449,8 +451,7 @@ function makeHotPopup(h){
 function jumpToHot(id){
   const h=HOTSPOTS.find(x=>x.id===id);
   if(!h||!hotMarkers[id])return;
-  map.flyTo([h.lat,h.lng],10,{duration:1.2});
-  setTimeout(()=>hotMarkers[id].openPopup(),1300);
+  hotMarkers[id].openPopup();
 }
 function buildHotList(){
   const filtered=currentCat==='all'?HOTSPOTS:HOTSPOTS.filter(h=>h.cat===currentCat);
@@ -514,9 +515,10 @@ function renderLiveHotMarkers(){
 function clickScHotspot(id){
   const h=HOTSPOTS.find(x=>x.id===id);
   if(!h)return;
-  if(hotMarkers[id]) map.flyTo([h.lat,h.lng],10,{duration:1});
+  // Open popup without zooming
+  if(hotMarkers[id]) hotMarkers[id].openPopup();
   currentLat=h.lat; currentLng=h.lng; currentRadius=100;
-  document.getElementById('listTitle').textContent='\u{1F4E1} '+h.name;
+  document.getElementById('listTitle').textContent='📡 '+h.name;
   document.querySelectorAll('#scNavChips .chip').forEach(c=>c.classList.remove('active'));
   const chip=document.querySelector('#scNavChips .chip[data-id="'+id+'"]');
   if(chip) chip.classList.add('active');
