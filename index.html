@@ -152,8 +152,12 @@ header{grid-area:hdr;display:flex;align-items:center;justify-content:space-betwe
   }
   #mobileList .m-item{margin-bottom:2px}
 }
+@media (max-width: 700px){
+  .leaflet-popup{ display:none !important; }
+}
 @media (min-width: 701px){
   #mobileList{display:none}
+  #mobilePopup{display:none !important}
 }
 .leaflet-tile-pane{filter:grayscale(12%) brightness(1.02)}
 .leaflet-control-zoom{border:none!important;box-shadow:var(--shadow)!important;
@@ -284,6 +288,16 @@ header{grid-area:hdr;display:flex;align-items:center;justify-content:space-betwe
     <span class="count-badge" id="mobileListCount">0</span>
   </div>
   <div id="mobileListInner"></div>
+</div>
+
+<!-- Mobile popup card — appears below map instead of overlaying it -->
+<div id="mobilePopup" style="display:none;flex-shrink:0;background:white;
+  border-top:3px solid var(--ink3);padding:14px 16px;
+  box-shadow:0 -4px 20px rgba(26,25,22,0.12);position:relative">
+  <button onclick="closeMobilePopup()" style="position:absolute;top:10px;left:12px;
+    background:var(--bg2);border:none;border-radius:8px;padding:3px 9px;
+    font-size:13px;cursor:pointer;color:var(--ink2)">✕</button>
+  <div id="mobilePopupInner"></div>
 </div>
 
 <script>
@@ -474,6 +488,7 @@ function renderHotspots(){
     });
     const m=L.marker([h.lat,h.lng],{icon})
       .bindPopup(makeHotPopup(h),{maxWidth:300})
+      .on('click',()=>{ if(isMobile()){ L.DomEvent.stopPropagation; showMobilePopup(makeHotPopup(h)); } })
       .addTo(map);
     hotMarkers[h.id]=m;
   });
@@ -557,7 +572,10 @@ function renderLiveHotMarkers(){
     });
     const m=L.marker([h.lat,h.lng],{icon})
       .bindPopup(makeHotPopup(h),{maxWidth:300})
-      .on('click',()=>clickScHotspot(h.id))
+      .on('click',()=>{
+        if(isMobile()){ showMobilePopup(makeHotPopup(h)); }
+        clickScHotspot(h.id);
+      })
       .addTo(map);
     hotMarkers[h.id]=m;
   });
@@ -716,6 +734,22 @@ function useMyLocation(){
 const style=document.createElement('style');
 style.textContent=`@keyframes pulse-marker{0%,100%{transform:scale(1);box-shadow:0 0 12px currentColor}50%{transform:scale(1.15);box-shadow:0 0 24px currentColor}}`;
 document.head.appendChild(style);
+
+// ── MOBILE POPUP ──
+function showMobilePopup(html){
+  if(!isMobile()) return;
+  const el=document.getElementById('mobilePopup');
+  document.getElementById('mobilePopupInner').innerHTML=html;
+  el.style.display='block';
+  // Shrink map to make room
+  document.getElementById('map').style.height='30vh';
+  map.invalidateSize();
+}
+function closeMobilePopup(){
+  document.getElementById('mobilePopup').style.display='none';
+  document.getElementById('map').style.height='42vh';
+  map.invalidateSize();
+}
 
 // ── MOBILE SYNC ──
 function isMobile(){ return window.innerWidth <= 700; }
