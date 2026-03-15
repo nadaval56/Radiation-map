@@ -307,7 +307,6 @@ const HOTSPOTS=[
   {id:47, name:'שנגחאי',               country:'סין',      lat:31.228,  lng:121.474, nsvh:80,     cat:'normal',   icon:'🏙', year:2022, source:'CAEA',           note:'סין בונה יותר כורים גרעיניים מכל מדינה אחרת כיום.'},
   {id:48, name:'בייג׳ינג',             country:'סין',      lat:39.905,  lng:116.391, nsvh:90,     cat:'normal',   icon:'🏯', year:2022, source:'CAEA',           note:'ממוצע עירוני.'},
   {id:49, name:'מומבאי',               country:'הודו',     lat:18.975,  lng:72.826,  nsvh:110,    cat:'normal',   icon:'🎬', year:2022, source:'AERB',           note:'הודו עם 22 כורים גרעיניים.'},
-  {id:50, name:'ISS — תחנת חלל',       country:'חלל',      lat:20.000,  lng:10.000,  nsvh:640000, cat:'space',    icon:'🛸', year:2023, source:'NASA',           note:'אסטרונאוטים מקבלים ~200 mSv לשנה — פי 200 מאדם על הקרקע.'},
   {id:51, name:'סאו פאולו',            country:'ברזיל',    lat:-23.550, lng:-46.633, nsvh:90,     cat:'normal',   icon:'🌆', year:2022, source:'CNEN',           note:'ממוצע עירוני.'},
   {id:52, name:'קייפטאון',             country:'דרום אפריקה',lat:-33.924,lng:18.424, nsvh:75,     cat:'normal',   icon:'🌊', year:2022, source:'NNR',            note:'דרום אפריקה — מדינה אפריקאית יחידה עם כורים גרעיניים.'},
   {id:53, name:'סידני',                country:'אוסטרליה', lat:-33.868, lng:151.210, nsvh:85,     cat:'normal',   icon:'🦘', year:2022, source:'ARPANSA',        note:'אוסטרליה ללא כורים מסחריים.'},
@@ -401,30 +400,28 @@ function setMode(m){
 }
 
 // HOTSPOTS
-function renderHotspots(faded){
+function renderHotspots(){
   clearHotMarkers();
   const filtered=currentCat==='all'?HOTSPOTS:HOTSPOTS.filter(h=>h.cat===currentCat);
   filtered.forEach(h=>{
     const c=CAT_COL[h.cat]||'#1A1916';
-    // Size by severity — MUCH bigger for visibility
-    const sz=faded?10:(h.nsvh>100000?28:h.nsvh>10000?22:h.nsvh>1000?18:14);
-    const pulse=!faded&&h.nsvh>50000?
-      `animation:pulse-marker 2s ease-in-out infinite;`:'';
+    const sz=h.nsvh>100000?28:h.nsvh>10000?22:h.nsvh>1000?18:14;
+    const pulse=h.nsvh>50000?'animation:pulse-marker 2s ease-in-out infinite;':'';
     const icon=L.divIcon({
       className:'',
       html:`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:${c};
-        border:${faded?'1.5':'3'}px solid white;opacity:${faded?0.3:1};
-        box-shadow:0 0 ${faded?4:12}px ${c},0 2px 8px rgba(0,0,0,.25);
+        border:3px solid white;
+        box-shadow:0 0 12px ${c},0 2px 8px rgba(0,0,0,.25);
         cursor:pointer;${pulse}"></div>`,
       iconSize:[sz,sz],iconAnchor:[sz/2,sz/2]
     });
     const m=L.marker([h.lat,h.lng],{icon})
       .bindPopup(makeHotPopup(h),{maxWidth:300})
-      .on('click',()=>{}) // popup opens automatically on click
+      .on('click',()=>{})
       .addTo(map);
     hotMarkers[h.id]=m;
   });
-  if(!faded)document.getElementById('listCount').textContent=filtered.length;
+  document.getElementById('listCount').textContent=filtered.length;
 }
 function clearHotMarkers(){Object.values(hotMarkers).forEach(m=>map.removeLayer(m));hotMarkers={};}
 
