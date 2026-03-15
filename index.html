@@ -194,6 +194,11 @@ header{grid-area:hdr;display:flex;align-items:center;justify-content:space-betwe
       <div class="lbl">רדיוס</div>
       <div class="chips" id="radChips"></div>
     </div>
+    <div class="sec" style="background:rgba(245,166,35,0.07);border-color:rgba(245,166,35,0.2)">
+      <div style="font-size:10px;color:#9a6800;line-height:1.5;font-family:'DM Mono',monospace">
+        💡 <b>הסבר:</b> Safecast הוא מאגר היסטורי — מתנדבים מדדו עם גייגר ושלחו. הנתונים מ-2013 עד היום, <b>לא</b> בזמן אמת. שכבת הצבע נראית בזום 8+ על יפן.
+      </div>
+    </div>
     <div class="sec">
       <div class="status-bar" id="statusBar"><span id="sIcon">⏳</span><span id="sMsg">מחכה...</span></div>
     </div>
@@ -341,26 +346,29 @@ function setMode(m){
     buildHotList();
     map.setView([35,20],3);
   } else {
-    clearHotMarkers();
+    // In live mode: show hotspot markers as faded background layer
+    renderHotspots(true);
     buildLocChips();
     buildRadChips();
-    map.setView([currentLat,currentLng],8);
+    map.setView([currentLat,currentLng],9);
     loadLive();
   }
 }
 
 // ── HOTSPOTS MODE ──
-function renderHotspots(){
+function renderHotspots(faded){
   clearHotMarkers();
   const filtered=currentCat==='all'?HOTSPOTS:HOTSPOTS.filter(h=>h.cat===currentCat);
   filtered.forEach(h=>{
     if(h.lat===51.0&&h.lng===0.0)return;
     const c=CAT_COL[h.cat]||'#1A1916';
-    const sz=h.nsvh>10000?16:12;
+    const sz=faded?10:(h.nsvh>10000?16:12);
+    const opacity=faded?0.35:1;
     const icon=L.divIcon({
       className:'',
       html:`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:${c};
-        border:2.5px solid white;box-shadow:0 0 8px ${c},0 2px 6px rgba(0,0,0,.2);cursor:pointer"></div>`,
+        border:2px solid white;opacity:${opacity};
+        box-shadow:0 0 6px ${c},0 2px 5px rgba(0,0,0,.15);cursor:pointer"></div>`,
       iconSize:[sz,sz],iconAnchor:[sz/2,sz/2]
     });
     const m=L.marker([h.lat,h.lng],{icon})
@@ -441,7 +449,7 @@ function selectLoc(lat,lng,el){
   currentLat=lat;currentLng=lng;
   document.querySelectorAll('#locChips .chip').forEach(c=>c.classList.remove('active'));
   el.classList.add('active');
-  map.setView([lat,lng],8);
+  map.flyTo([lat,lng],10,{duration:1.2});
   loadLive();
 }
 function setRadius(r,el){
