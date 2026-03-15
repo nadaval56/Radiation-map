@@ -109,6 +109,52 @@ header{grid-area:hdr;display:flex;align-items:center;justify-content:space-betwe
 
 /* ── MAP ── */
 #map{grid-area:map;width:100%;height:100%}
+
+/* ── MOBILE ── */
+@media (max-width: 700px) {
+  body{
+    display:flex;flex-direction:column;
+    height:100dvh;overflow:hidden;
+  }
+  header{
+    flex-shrink:0;padding:0 14px;
+  }
+  .logo-sub{display:none}
+  .panel{
+    grid-area:unset;border-left:none;
+    flex-shrink:0;overflow:visible;
+    max-height:none;
+  }
+  /* On mobile show only the controls, not the list */
+  .panel > .list-hdr,
+  .panel > .list-scroll{ display:none }
+  /* Collapsible sections — only show tabs + active section */
+  .sec{ padding:9px 12px; }
+
+  #map{
+    grid-area:unset;
+    flex-shrink:0;
+    height:42vh;
+    min-height:180px;
+  }
+
+  /* Mobile list appears BELOW the map */
+  #mobileList{
+    flex:1;overflow-y:auto;
+    background:var(--bg);
+    border-top:1px solid var(--bg2);
+    padding:6px 10px 20px;
+  }
+  #mobileList .list-hdr-m{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:8px 4px 6px;
+    position:sticky;top:0;background:var(--bg);z-index:10;
+  }
+  #mobileList .m-item{margin-bottom:2px}
+}
+@media (min-width: 701px){
+  #mobileList{display:none}
+}
 .leaflet-tile-pane{filter:grayscale(12%) brightness(1.02)}
 .leaflet-control-zoom{border:none!important;box-shadow:var(--shadow)!important;
   border-radius:10px!important;overflow:hidden}
@@ -230,6 +276,15 @@ header{grid-area:hdr;display:flex;align-items:center;justify-content:space-betwe
 </aside>
 
 <div id="map"></div>
+
+<!-- Mobile list — shown below map on small screens -->
+<div id="mobileList" style="display:none">
+  <div class="list-hdr-m">
+    <span class="lbl" style="margin-bottom:0" id="mobileListTitle">נקודות עניין</span>
+    <span class="count-badge" id="mobileListCount">0</span>
+  </div>
+  <div id="mobileListInner"></div>
+</div>
 
 <script>
 const PROXY='https://safecast-proxy.onrender.com';
@@ -467,6 +522,7 @@ function buildHotList(){
       <div class="m-date">${h.year}</div>
     </div>`;
   }).join('');
+  syncMobileList();
 }
 function buildCatChips(){
   document.getElementById('catChips').innerHTML=CATS.map(c=>
@@ -628,6 +684,7 @@ function renderLive(pts){
       </div>
       <div class="m-date">${fmtDate(p.date)}</div>
     </div>`).join('');
+  syncMobileList();
 }
 
 // SEARCH
@@ -660,11 +717,30 @@ const style=document.createElement('style');
 style.textContent=`@keyframes pulse-marker{0%,100%{transform:scale(1);box-shadow:0 0 12px currentColor}50%{transform:scale(1.15);box-shadow:0 0 24px currentColor}}`;
 document.head.appendChild(style);
 
+// ── MOBILE SYNC ──
+function isMobile(){ return window.innerWidth <= 700; }
+
+function syncMobileList(){
+  const ml=document.getElementById('mobileList');
+  if(!ml) return;
+  ml.style.display = isMobile() ? 'flex' : 'none';
+  if(!isMobile()) return;
+  ml.style.flexDirection='column';
+  // Mirror content from desktop list
+  const title=document.getElementById('listTitle');
+  const count=document.getElementById('listCount');
+  const inner=document.getElementById('mainList');
+  document.getElementById('mobileListTitle').textContent=title?title.textContent:'';
+  document.getElementById('mobileListCount').textContent=count?count.textContent:'0';
+  document.getElementById('mobileListInner').innerHTML=inner?inner.innerHTML:'';
+}
+
 // INIT
 buildCatChips();
 buildRadChips();
 renderHotspots();
 buildHotList();
+window.addEventListener('resize', syncMobileList);
 
 // Pre-warm Render proxy in background
 setTimeout(()=>fetch(PROXY+'/').catch(()=>{}), 1000);
