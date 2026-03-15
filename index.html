@@ -184,8 +184,12 @@ header{grid-area:hdr;display:flex;align-items:center;justify-content:space-betwe
   <div id="liveControls" style="display:none">
     <div class="sec">
       <div class="info-box yellow">
-        <b>איך זה עובד?</b> לחץ על כל נקודה במפה — יוטענו מדידות Safecast האמיתיות מהאזור. הנתונים נאספו ע״י מתנדבים בין 2011–2022.
+        <b>איך זה עובד?</b> לחץ על נקודה במפה או בחר מהרשימה — יוטענו מדידות Safecast האמיתיות. הנתונים נאספו ע״י מתנדבים 2011–2022.
       </div>
+    </div>
+    <div class="sec">
+      <div class="lbl">מיקומים עם נתוני Safecast</div>
+      <div class="chips" id="scNavChips"></div>
     </div>
     <div class="sec">
       <div class="lbl">רדיוס חיפוש</div>
@@ -235,16 +239,16 @@ const HOTSPOTS=[
   // אסונות גרעיניים
   {id:1,  name:'כור צ׳רנוביל',        country:'אוקראינה', lat:51.389,  lng:30.099,  nsvh:160000, cat:'disaster', icon:'☢', year:2021, source:'IAEA',           note:'ממוצע באתר הכור עצמו. ערכי שיא ביערות האדומים עשרות מיליונים.'},
   {id:2,  name:'יער אדום',             country:'אוקראינה', lat:51.402,  lng:30.068,  nsvh:500000, cat:'disaster', icon:'🌲', year:2020, source:'Ukrainian State', note:'העצים הפכו חום-כתום מהקרינה ב-1986. אחד האזורים המזוהמים ביותר.'},
-  {id:3,  name:'פריפיאט',              country:'אוקראינה', lat:51.407,  lng:30.054,  nsvh:8000,   cat:'disaster', icon:'🏚', year:2019, source:'Safecast',        note:'עיר רפאים שפונתה ב-1986. 50,000 תושבים עזבו תוך שעות.'},
-  {id:4,  name:'כור פוקושימה דאיצ׳י', country:'יפן',      lat:37.421,  lng:141.032, nsvh:105000, cat:'disaster', icon:'⚡', year:2022, source:'Safecast/TEPCO',  note:'אסון מרץ 2011 — צונאמי השבית את מערכות הקירור.'},
-  {id:5,  name:'נאמיה — אזור פינוי',  country:'יפן',      lat:37.480,  lng:141.000, nsvh:3500,   cat:'disaster', icon:'🚧', year:2021, source:'Safecast',        note:'פונתה לאחר פוקושימה. חלק מהתושבים חזרו לאחר הורדת הקרינה.'},
-  {id:6,  name:'אוקומה',               country:'יפן',      lat:37.400,  lng:141.020, nsvh:12000,  cat:'disaster', icon:'🏘', year:2020, source:'Safecast',        note:'אחת הערים שפונתה — צמוד לכור. אזור פינוי עד 2019.'},
+  {id:3,  name:'פריפיאט',              country:'אוקראינה', lat:51.407,  lng:30.054,  nsvh:8000,   cat:'disaster', icon:'🏚', year:2019, source:'Safecast', sc:true,        note:'עיר רפאים שפונתה ב-1986. 50,000 תושבים עזבו תוך שעות.'},
+  {id:4,  name:'כור פוקושימה דאיצ׳י', country:'יפן',      lat:37.421,  lng:141.032, nsvh:105000, cat:'disaster', icon:'⚡', year:2022, source:'Safecast/TEPCO', sc:true,  note:'אסון מרץ 2011 — צונאמי השבית את מערכות הקירור.'},
+  {id:5,  name:'נאמיה — אזור פינוי',  country:'יפן',      lat:37.480,  lng:141.000, nsvh:3500,   cat:'disaster', icon:'🚧', year:2021, source:'Safecast', sc:true,        note:'פונתה לאחר פוקושימה. חלק מהתושבים חזרו לאחר הורדת הקרינה.'},
+  {id:6,  name:'אוקומה',               country:'יפן',      lat:37.400,  lng:141.020, nsvh:12000,  cat:'disaster', icon:'🏘', year:2020, source:'Safecast', sc:true,        note:'אחת הערים שפונתה — צמוד לכור. אזור פינוי עד 2019.'},
 
   // נורמלי — יפן
-  {id:7,  name:'טוקיו',                country:'יפן',      lat:35.690,  lng:139.700, nsvh:68,     cat:'normal',   icon:'🗼', year:2023, source:'Safecast',        note:'חזר לנורמה לאחר 2011. ממוצע עירוני יציב.'},
-  {id:8,  name:'קיוטו',                country:'יפן',      lat:35.011,  lng:135.768, nsvh:55,     cat:'normal',   icon:'⛩', year:2022, source:'Safecast',        note:'מערב יפן — רחוק מהשפעת פוקושימה.'},
-  {id:9,  name:'אוסקה',                country:'יפן',      lat:34.693,  lng:135.502, nsvh:52,     cat:'normal',   icon:'🏙', year:2022, source:'Safecast',        note:'ממוצע עירוני נמוך.'},
-  {id:10, name:'סאפורו',               country:'יפן',      lat:43.061,  lng:141.354, nsvh:60,     cat:'normal',   icon:'❄', year:2022, source:'Safecast',        note:'איי הוקאידו — רחוק מפוקושימה.'},
+  {id:7,  name:'טוקיו',                country:'יפן',      lat:35.690,  lng:139.700, nsvh:68,     cat:'normal',   icon:'🗼', year:2023, source:'Safecast', sc:true,        note:'חזר לנורמה לאחר 2011. ממוצע עירוני יציב.'},
+  {id:8,  name:'קיוטו',                country:'יפן',      lat:35.011,  lng:135.768, nsvh:55,     cat:'normal',   icon:'⛩', year:2022, source:'Safecast', sc:true,        note:'מערב יפן — רחוק מהשפעת פוקושימה.'},
+  {id:9,  name:'אוסקה',                country:'יפן',      lat:34.693,  lng:135.502, nsvh:52,     cat:'normal',   icon:'🏙', year:2022, source:'Safecast', sc:true,        note:'ממוצע עירוני נמוך.'},
+  {id:10, name:'סאפורו',               country:'יפן',      lat:43.061,  lng:141.354, nsvh:60,     cat:'normal',   icon:'❄', year:2022, source:'Safecast',        sc:true, note:'איי הוקאידו — רחוק מפוקושימה.'},
 
   // אירופה
   {id:11, name:'פריז',                 country:'צרפת',     lat:48.857,  lng:2.347,   nsvh:90,     cat:'normal',   icon:'🗼', year:2023, source:'IRSN',           note:'~70% מחשמל צרפת מאנרגיה גרעינית — ללא תאונות.'},
@@ -483,7 +487,8 @@ function clearLiveMarkers(){liveMarkers.forEach(m=>map.removeLayer(m));liveMarke
 // Render hotspot markers in live mode — clicking loads Safecast data
 function renderLiveHotMarkers(){
   clearHotMarkers();
-  HOTSPOTS.forEach(h=>{
+  const scHotspots=HOTSPOTS.filter(h=>h.sc);
+  scHotspots.forEach(h=>{
     const c=CAT_COL[h.cat]||'#1A1916';
     const sz=h.nsvh>100000?28:h.nsvh>10000?22:h.nsvh>1000?18:14;
     const pulse=h.nsvh>50000?'animation:pulse-marker 2s ease-in-out infinite;':'';
@@ -495,15 +500,27 @@ function renderLiveHotMarkers(){
       iconSize:[sz,sz],iconAnchor:[sz/2,sz/2]
     });
     const m=L.marker([h.lat,h.lng],{icon})
-      .on('click',()=>{
-        currentLat=h.lat; currentLng=h.lng; currentRadius=100;
-        // Highlight selected in sidebar title
-        document.getElementById('listTitle').textContent='📡 '+h.name;
-        loadLive();
-      })
+      .on('click',()=>clickScHotspot(h.id))
       .addTo(map);
     hotMarkers[h.id]=m;
   });
+  // Build secondary nav chips
+  const nav=document.getElementById('scNavChips');
+  if(nav) nav.innerHTML=scHotspots.map(h=>
+    `<button class="chip" data-id="${h.id}" onclick="clickScHotspot(${h.id})">${h.icon} ${h.name}</button>`
+  ).join('');
+}
+
+function clickScHotspot(id){
+  const h=HOTSPOTS.find(x=>x.id===id);
+  if(!h)return;
+  if(hotMarkers[id]) map.flyTo([h.lat,h.lng],10,{duration:1});
+  currentLat=h.lat; currentLng=h.lng; currentRadius=100;
+  document.getElementById('listTitle').textContent='\u{1F4E1} '+h.name;
+  document.querySelectorAll('#scNavChips .chip').forEach(c=>c.classList.remove('active'));
+  const chip=document.querySelector('#scNavChips .chip[data-id="'+id+'"]');
+  if(chip) chip.classList.add('active');
+  loadLive();
 }
 function buildRadChips(){
   document.getElementById('radChips').innerHTML=RADII.map(r=>
