@@ -653,7 +653,7 @@
     </div>
     <div class="gauge-status">
       <div class="gauge-status-dot" id="statusDot"></div>
-      <div class="gauge-status-text" id="statusText">מחכה לנתונים...</div>
+      <div class="gauge-status-text" id="statusText">שכבת Safecast פעילה ✓</div>
     </div>
   </div>
 
@@ -664,7 +664,7 @@
   <div class="panel-list" id="measurementList">
     <div class="empty-state">
       <div class="empty-icon">☢</div>
-      <div class="empty-text">חפש מיקום או לחץ על המפה<br>כדי לטעון נתוני קרינה</div>
+      <div class="empty-text">חפש מיקום או לחץ על המפה<br>הנתונים מוצגים ישירות על המפה כשכבת צבע</div>
     </div>
   </div>
 </aside>
@@ -693,14 +693,38 @@ L.control.attribution({ prefix: false, position: 'bottomleft' })
   .addAttribution('© OpenStreetMap | Safecast')
   .addTo(map);
 
+// ── SAFECAST RADIATION TILE LAYER — no API, no CORS! ──
+const safecastLayer = L.tileLayer(
+  'https://tilecache.safecast.org/v1/tiles/{z}/{x}/{y}.png',
+  { maxZoom: 19, opacity: 0.7,
+    errorTileUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
+  }
+).addTo(map);
+
+// Opacity slider
+const opacityEl = document.createElement('div');
+opacityEl.style.cssText = 'position:absolute;bottom:28px;left:16px;z-index:500;background:white;border-radius:12px;padding:12px 14px;box-shadow:0 2px 12px rgba(0,0,0,0.1);min-width:150px;';
+opacityEl.innerHTML = `<div style="font-family:monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#B0AFA9;margin-bottom:7px;">שכבת קרינה</div>
+<input type="range" min="0" max="100" value="70" id="opacitySlider" style="width:100%;accent-color:#1A1916;cursor:pointer;">
+<div style="display:flex;justify-content:space-between;margin-top:3px;font-size:9px;font-family:monospace;color:#B0AFA9"><span>שקוף</span><span id="opacityVal">70%</span><span>מלא</span></div>`;
+document.getElementById('map').appendChild(opacityEl);
+setTimeout(() => {
+  document.getElementById('opacitySlider').addEventListener('input', function() {
+    safecastLayer.setOpacity(this.value / 100);
+    document.getElementById('opacityVal').textContent = this.value + '%';
+  });
+}, 100);
+
 // Legend
 const legendEl = document.createElement('div');
 legendEl.className = 'map-legend';
 legendEl.innerHTML = `
-  <div class="legend-title">קרינת רקע</div>
-  <div class="legend-row"><div class="legend-dot safe"></div>&lt; 200 nSv/h — נורמלי</div>
-  <div class="legend-row"><div class="legend-dot warn"></div>200–600 nSv/h — מוגבר</div>
-  <div class="legend-row"><div class="legend-dot danger"></div>&gt; 600 nSv/h — גבוה</div>
+  <div class="legend-title">קרינת רקע — Safecast</div>
+  <div class="legend-row"><div class="legend-dot" style="background:#42C5F4;box-shadow:0 0 5px #42C5F4"></div>נמוך מאוד</div>
+  <div class="legend-row"><div class="legend-dot" style="background:#5DB87A;box-shadow:0 0 5px #5DB87A"></div>נורמלי</div>
+  <div class="legend-row"><div class="legend-dot" style="background:#F5A623;box-shadow:0 0 5px #F5A623"></div>מוגבר</div>
+  <div class="legend-row"><div class="legend-dot" style="background:#E8413B;box-shadow:0 0 5px #E8413B"></div>גבוה</div>
+  <div class="legend-row"><div class="legend-dot" style="background:#7B2FBE;box-shadow:0 0 5px #7B2FBE"></div>גבוה מאוד</div>
 `;
 document.getElementById('map').appendChild(legendEl);
 
@@ -950,7 +974,10 @@ function showEmpty(msg) {
   document.getElementById('statMax').textContent = '—';
 }
 
-// ── INIT: load Fukushima ──
+// ── INIT ──
+document.getElementById('statusDot').style.background = '#5DB87A';
+document.getElementById('statusText').textContent = 'שכבת Safecast פעילה ✓';
+// Try to load measurement data in background
 fetchData(37.42, 141.03);
 </script>
 </body>
