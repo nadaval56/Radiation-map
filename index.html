@@ -184,28 +184,15 @@ header{grid-area:hdr;display:flex;align-items:center;justify-content:space-betwe
   <div id="liveControls" style="display:none">
     <div class="sec">
       <div class="info-box yellow">
-        <b>מה זה "נתוני Safecast"?</b><br>
-        מתנדבים ברחבי העולם מדדו קרינה עם גייגר ושלחו למאגר. הנתונים ישנים (2013–2022) — לא בזמן אמת. בחר מיקום וראה אילו מדידות נמצאות שם.
+        <b>איך זה עובד?</b> לחץ על כל נקודה במפה — יוטענו מדידות Safecast האמיתיות מהאזור. הנתונים נאספו ע״י מתנדבים בין 2011–2022.
       </div>
-    </div>
-    <div class="sec">
-      <div class="lbl">חיפוש מיקום</div>
-      <div class="search-row">
-        <input class="search-input" id="searchInput" placeholder="עיר, מדינה..." type="text" dir="rtl">
-        <button class="btn" onclick="searchLocation()">→</button>
-        <button class="btn btn-ghost" onclick="useMyLocation()">⌖</button>
-      </div>
-    </div>
-    <div class="sec">
-      <div class="lbl">מיקומים מהירים</div>
-      <div class="chips" id="locChips"></div>
     </div>
     <div class="sec">
       <div class="lbl">רדיוס חיפוש</div>
       <div class="chips" id="radChips"></div>
     </div>
     <div class="sec">
-      <div class="status-bar" id="statusBar"><span id="sIcon">⏳</span><span id="sMsg" style="margin-right:6px">מחכה...</span></div>
+      <div class="status-bar" id="statusBar"><span id="sIcon"></span><span id="sMsg" style="margin-right:6px">לחץ על נקודה במפה</span></div>
     </div>
     <div class="sec">
       <div class="stats-grid">
@@ -389,22 +376,24 @@ function setMode(m){
   document.getElementById('listTitle').textContent=m==='hotspots'?'נקודות עניין':'מדידות Safecast';
   if(m==='hotspots'){
     clearLiveMarkers();
+    clearHotMarkers();
     renderHotspots();
     buildHotList();
+    document.getElementById('listTitle').textContent='נקודות עניין';
   } else {
-    clearHotMarkers();
-    buildLocChips();
-    buildRadChips();
-    // Don't auto-load — let user choose location
-    document.getElementById('mainList').innerHTML=
-      `<div class="empty" style="padding:24px 12px;color:var(--ink3);text-align:center">
-        <div style="font-size:24px;margin-bottom:10px">📍</div>
-        <div style="font-size:13px;font-weight:600">בחר מיקום מהירים<br>או חפש עיר כדי לטעון נתונים</div>
-      </div>`;
+    // In live mode: show same markers but clicking loads Safecast data in sidebar
+    clearLiveMarkers();
+    renderLiveHotMarkers();
     document.getElementById('listCount').textContent='0';
-    document.getElementById('statusBar').className='status-bar';
+    document.getElementById('mainList').innerHTML=
+      `<div class="empty">
+        <div style="font-size:22px;margin-bottom:8px">👆</div>
+        <div style="font-size:13px;font-weight:600;line-height:1.6">לחץ על נקודה במפה<br>לטעינת נתוני Safecast</div>
+      </div>`;
+    resetLiveStats();
     document.getElementById('sIcon').textContent='';
-    document.getElementById('sMsg').textContent='בחר מיקום';
+    document.getElementById('sMsg').textContent='לחץ על נקודה במפה';
+    document.getElementById('statusBar').className='status-bar';
   }
 }
 
@@ -490,28 +479,42 @@ function setCat(cat,el){
 
 // LIVE
 function clearLiveMarkers(){liveMarkers.forEach(m=>map.removeLayer(m));liveMarkers=[];}
-function buildLocChips(){
-  document.getElementById('locChips').innerHTML=QUICK_LOCS.map(l=>
-    `<button class="chip" onclick="selectLoc(${l.lat},${l.lng},this)">${l.name}</button>`
-  ).join('');
+
+// Render hotspot markers in live mode — clicking loads Safecast data
+function renderLiveHotMarkers(){
+  clearHotMarkers();
+  HOTSPOTS.forEach(h=>{
+    const c=CAT_COL[h.cat]||'#1A1916';
+    const sz=h.nsvh>100000?28:h.nsvh>10000?22:h.nsvh>1000?18:14;
+    const pulse=h.nsvh>50000?'animation:pulse-marker 2s ease-in-out infinite;':'';
+    const icon=L.divIcon({
+      className:'',
+      html:`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:${c};
+        border:3px solid white;box-shadow:0 0 12px ${c},0 2px 8px rgba(0,0,0,.25);
+        cursor:pointer;${pulse}"></div>`,
+      iconSize:[sz,sz],iconAnchor:[sz/2,sz/2]
+    });
+    const m=L.marker([h.lat,h.lng],{icon})
+      .on('click',()=>{
+        currentLat=h.lat; currentLng=h.lng; currentRadius=100;
+        // Highlight selected in sidebar title
+        document.getElementById('listTitle').textContent='📡 '+h.name;
+        loadLive();
+      })
+      .addTo(map);
+    hotMarkers[h.id]=m;
+  });
 }
 function buildRadChips(){
   document.getElementById('radChips').innerHTML=RADII.map(r=>
     `<button class="chip${r===currentRadius?' active':''}" onclick="setRadius(${r},this)">${r}km</button>`
   ).join('');
 }
-function selectLoc(lat,lng,el){
-  currentLat=lat;currentLng=lng;
-  document.querySelectorAll('#locChips .chip').forEach(c=>c.classList.remove('active'));
-  el.classList.add('active');
-  map.flyTo([lat,lng],10,{duration:1});
-  loadLive();
-}
 function setRadius(r,el){
   currentRadius=r;
   document.querySelectorAll('#radChips .chip').forEach(c=>c.classList.remove('active'));
   el.classList.add('active');
-  loadLive();
+  if(currentLat&&liveMarkers.length>0) loadLive();
 }
 async function loadLive(){
   setStatus('⏳','מתחבר...',' ');
@@ -642,10 +645,11 @@ document.head.appendChild(style);
 
 // INIT
 buildCatChips();
+buildRadChips();
 renderHotspots();
 buildHotList();
 
-// Pre-warm Render proxy in background (free tier sleeps)
+// Pre-warm Render proxy in background
 setTimeout(()=>fetch(PROXY+'/').catch(()=>{}), 1000);
 </script>
 </body>
