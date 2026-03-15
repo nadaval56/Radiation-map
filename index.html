@@ -3,58 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RADIATION — Live World Map</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<title>מפת קרינה עולמית</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 :root{
   --bg:#F7F6F3;--bg2:#ECEAE5;--ink:#1A1916;--ink2:#6B6860;--ink3:#B0AFA9;
   --safe:#5DB87A;--warn:#F5A623;--danger:#E8413B;--hot:#7B2FBE;
-  --shadow:0 4px 24px rgba(26,25,22,0.09);
+  --shadow:0 4px 24px rgba(26,25,22,0.10);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--ink);
   height:100vh;overflow:hidden;display:grid;
-  grid-template-rows:54px 1fr;grid-template-columns:310px 1fr;
+  grid-template-rows:56px 1fr;grid-template-columns:320px 1fr;
   grid-template-areas:"hdr hdr" "panel map"}
+
 header{grid-area:hdr;display:flex;align-items:center;justify-content:space-between;
   padding:0 22px;border-bottom:1px solid var(--bg2);background:var(--bg);z-index:1000}
-.logo{font-weight:800;font-size:15px;letter-spacing:.1em;text-transform:uppercase}
-.logo-sub{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);margin-top:1px}
-.live-pill{display:flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;
-  font-size:10px;color:var(--ink2);padding:4px 10px;border-radius:20px;
-  background:white;border:1px solid var(--bg2)}
+.logo{font-weight:800;font-size:16px;letter-spacing:.06em;text-transform:uppercase}
+.logo-sub{font-size:11px;color:var(--ink3);margin-top:2px;font-weight:400}
+.live-pill{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ink2);
+  padding:5px 12px;border-radius:20px;background:white;border:1px solid var(--bg2)}
 .live-dot{width:7px;height:7px;border-radius:50%;background:var(--safe);
   animation:blink 2.5s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
+
 .panel{grid-area:panel;background:var(--bg);border-left:1px solid var(--bg2);
   display:flex;flex-direction:column;overflow:hidden}
-.sec{padding:11px 13px;border-bottom:1px solid var(--bg2)}
-.lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.sec{padding:12px 14px;border-bottom:1px solid var(--bg2)}
+.lbl{font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink3);margin-bottom:8px;font-weight:700}
 
-/* Mode tabs */
-.tabs{display:flex;gap:0;border:1.5px solid var(--bg2);border-radius:10px;overflow:hidden}
-.tab{flex:1;padding:7px 0;text-align:center;border:none;background:transparent;
-  font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;
+.tabs{display:flex;border:1.5px solid var(--bg2);border-radius:10px;overflow:hidden}
+.tab{flex:1;padding:8px 0;text-align:center;border:none;background:transparent;
+  font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;
   color:var(--ink2);transition:all .15s}
 .tab.active{background:var(--ink);color:var(--bg)}
 
-/* Search */
 .search-row{display:flex;gap:6px}
-.search-input{flex:1;padding:8px 11px;border:1.5px solid var(--bg2);background:white;
+.search-input{flex:1;padding:9px 12px;border:1.5px solid var(--bg2);background:white;
   border-radius:10px;font-family:'Syne',sans-serif;font-size:13px;color:var(--ink);
   outline:none;transition:border-color .2s}
 .search-input:focus{border-color:var(--ink)}
-.btn{padding:8px 12px;border:none;background:var(--ink);color:var(--bg);
+.btn{padding:9px 13px;border:none;background:var(--ink);color:var(--bg);
   border-radius:10px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;
   cursor:pointer;transition:opacity .15s}
 .btn:hover{opacity:.8}
 .btn-ghost{background:transparent;color:var(--ink2);border:1.5px solid var(--bg2)}
 .btn-ghost:hover{background:var(--bg2);opacity:1}
 
-/* Chips */
 .chips{display:flex;flex-wrap:wrap;gap:5px}
 .chip{padding:5px 10px;border-radius:20px;border:1.5px solid var(--bg2);
   background:transparent;font-family:'Syne',sans-serif;font-size:11px;font-weight:600;
@@ -62,122 +60,145 @@ header{grid-area:hdr;display:flex;align-items:center;justify-content:space-betwe
 .chip.active{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .chip:hover:not(.active){border-color:var(--ink3);color:var(--ink)}
 
-/* Status */
-.status-bar{display:flex;align-items:center;gap:7px;padding:7px 11px;
-  border-radius:10px;background:white;font-family:'DM Mono',monospace;
-  font-size:11px;color:var(--ink2);box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.info-box{font-size:11px;line-height:1.6;padding:10px 12px;border-radius:10px;
+  font-weight:500}
+.info-box.yellow{background:rgba(245,166,35,.1);color:#8a6200;border:1px solid rgba(245,166,35,.25)}
+.info-box.blue{background:rgba(37,99,235,.08);color:#1e40af;border:1px solid rgba(37,99,235,.2)}
+
+.status-bar{display:flex;align-items:center;gap:7px;padding:8px 12px;
+  border-radius:10px;background:white;font-size:12px;color:var(--ink2);
+  box-shadow:0 1px 4px rgba(0,0,0,.05)}
 .status-bar.err{background:rgba(232,65,59,.07);color:var(--danger)}
-.status-bar.ok{color:#3a9e5f}
+.status-bar.ok{color:#2d7a4a}
 
-/* Stats */
-.stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
-.stat-card{background:white;border-radius:10px;padding:9px 7px;text-align:center;box-shadow:var(--shadow)}
-.stat-val{font-family:'DM Mono',monospace;font-size:15px;letter-spacing:-.02em}
-.stat-unit{font-size:8px;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
-.stat-lbl{font-size:9px;color:var(--ink2);margin-top:3px;font-weight:600}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+.stat-card{background:white;border-radius:11px;padding:10px 8px;text-align:center;
+  box-shadow:var(--shadow)}
+.stat-val{font-size:17px;font-weight:700;letter-spacing:-.02em}
+.stat-unit{font-size:9px;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
+.stat-lbl{font-size:10px;color:var(--ink2);margin-top:4px;font-weight:600}
 
-/* Gauge */
-.gauge-track{height:5px;background:var(--bg2);border-radius:3px;overflow:hidden;margin:7px 0}
-.gauge-fill{height:100%;border-radius:3px;transition:width 1s cubic-bezier(.4,0,.2,1),background 1s;width:0}
-.gauge-ticks{display:flex;justify-content:space-between;
-  font-family:'DM Mono',monospace;font-size:8px;color:var(--ink3)}
-.gauge-row{display:flex;align-items:center;gap:7px;margin-top:7px}
-.gauge-dot{width:7px;height:7px;border-radius:50%;background:var(--ink3);flex-shrink:0;transition:background .5s}
-.gauge-text{font-size:11px;font-weight:700}
+.gauge-track{height:5px;background:var(--bg2);border-radius:3px;overflow:hidden;margin:8px 0}
+.gauge-fill{height:100%;border-radius:3px;transition:width 1s,background 1s;width:0}
+.gauge-ticks{display:flex;justify-content:space-between;font-size:9px;color:var(--ink3)}
+.gauge-row{display:flex;align-items:center;gap:7px;margin-top:8px}
+.gauge-dot{width:8px;height:8px;border-radius:50%;background:var(--ink3);flex-shrink:0;transition:background .5s}
+.gauge-text{font-size:12px;font-weight:700}
 
-/* Opacity */
-.slider-wrap{display:flex;align-items:center;gap:8px}
+.slider-wrap{display:flex;align-items:center;gap:9px}
 .slider-wrap input[type=range]{flex:1;accent-color:var(--ink);cursor:pointer}
-.slider-val{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink2);min-width:28px}
+.slider-val{font-size:12px;color:var(--ink2);min-width:30px;font-weight:600}
 
-/* List */
-.list-hdr{display:flex;justify-content:space-between;align-items:center;padding:9px 13px 5px}
-.count-badge{font-family:'DM Mono',monospace;font-size:10px;
-  background:var(--bg2);color:var(--ink2);padding:2px 8px;border-radius:20px}
+.list-hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 14px 6px}
+.count-badge{font-size:11px;background:var(--bg2);color:var(--ink2);
+  padding:2px 9px;border-radius:20px;font-weight:600}
 .list-scroll{flex:1;overflow-y:auto;padding:4px 8px 10px}
 .list-scroll::-webkit-scrollbar{width:3px}
 .list-scroll::-webkit-scrollbar-thumb{background:var(--bg2);border-radius:2px}
-.m-item{display:flex;align-items:center;gap:9px;padding:7px 8px;
+.m-item{display:flex;align-items:center;gap:9px;padding:8px 9px;
   border-radius:10px;cursor:pointer;transition:all .15s;margin-bottom:2px}
 .m-item:hover{background:white;box-shadow:var(--shadow);transform:translateX(-2px)}
 .m-item.sel{background:white;box-shadow:var(--shadow)}
-.m-icon{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;
-  justify-content:center;font-size:13px;flex-shrink:0}
-.m-name{font-size:11px;font-weight:700;line-height:1.2}
-.m-val{font-family:'DM Mono',monospace;font-size:11px;margin-top:1px}
-.m-sub{font-size:9px;color:var(--ink3);margin-top:1px;direction:ltr}
-.m-date{font-family:'DM Mono',monospace;font-size:9px;color:var(--ink3);flex-shrink:0}
+.m-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;
+  justify-content:center;font-size:15px;flex-shrink:0}
+.m-name{font-size:12px;font-weight:700;line-height:1.2}
+.m-val{font-size:12px;font-weight:600;margin-top:2px}
+.m-sub{font-size:10px;color:var(--ink3);margin-top:1px}
+.m-date{font-size:10px;color:var(--ink3);flex-shrink:0;font-weight:500}
 .empty{text-align:center;padding:24px 12px;color:var(--ink3)}
-.empty-icon{font-size:24px;margin-bottom:8px}
-.empty-text{font-size:12px;line-height:1.6}
 
-/* MAP */
+/* ── MAP ── */
 #map{grid-area:map;width:100%;height:100%}
-.leaflet-tile-pane{filter:grayscale(10%) brightness(1.02)}
-.leaflet-control-zoom{border:none!important;box-shadow:var(--shadow)!important;border-radius:10px!important;overflow:hidden}
+.leaflet-tile-pane{filter:grayscale(12%) brightness(1.02)}
+.leaflet-control-zoom{border:none!important;box-shadow:var(--shadow)!important;
+  border-radius:10px!important;overflow:hidden}
 .leaflet-control-zoom a{background:white!important;color:var(--ink)!important;border:none!important}
 .leaflet-control-zoom a:hover{background:var(--bg2)!important}
-.leaflet-popup-content-wrapper{border-radius:14px!important;box-shadow:0 8px 32px rgba(0,0,0,.13)!important;padding:0!important;border:none!important}
+.leaflet-popup-content-wrapper{border-radius:16px!important;
+  box-shadow:0 10px 40px rgba(0,0,0,.15)!important;padding:0!important;border:none!important}
 .leaflet-popup-content{margin:0!important;width:auto!important}
 .leaflet-popup-tip-container{display:none}
-.pu{padding:14px 16px;min-width:190px;max-width:250px}
-.pu-name{font-weight:800;font-size:13px;margin-bottom:7px}
-.pu-val{font-family:'DM Mono',monospace;font-size:27px;letter-spacing:-.03em;line-height:1}
-.pu-unit{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);text-transform:uppercase;margin-top:3px}
-.pu-div{height:1px;background:var(--bg2);margin:9px 0}
-.pu-meta{font-size:11px;color:var(--ink2);line-height:1.8;font-family:'DM Mono',monospace;direction:ltr}
-.pu-badge{display:inline-flex;padding:4px 11px;border-radius:20px;font-size:10px;font-weight:700;margin-top:8px}
-.pu-note{font-size:9px;color:var(--ink3);margin-top:8px;line-height:1.5}
+
+/* POPUP — large readable text */
+.pu{padding:18px 20px;min-width:220px;max-width:280px;font-family:'Syne',sans-serif}
+.pu-name{font-weight:800;font-size:16px;margin-bottom:10px;line-height:1.3}
+.pu-val{font-size:36px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.pu-unit{font-size:13px;color:var(--ink3);text-transform:uppercase;margin-top:4px;font-weight:600}
+.pu-div{height:1px;background:var(--bg2);margin:12px 0}
+.pu-meta{font-size:13px;color:var(--ink2);line-height:2;direction:ltr}
+.pu-badge{display:inline-flex;padding:5px 14px;border-radius:20px;
+  font-size:12px;font-weight:800;margin-top:10px}
+.pu-compare{margin-top:10px;font-size:12px;color:var(--ink2);
+  background:var(--bg);border-radius:9px;padding:10px 12px;line-height:1.7;font-weight:500}
+.pu-note{font-size:12px;color:var(--ink3);margin-top:10px;line-height:1.6;font-weight:500}
+
+/* Marker label */
+.hot-label{
+  background:white;border:none;box-shadow:0 2px 8px rgba(0,0,0,.15);
+  border-radius:6px;padding:3px 7px;font-family:'Syne',sans-serif;
+  font-size:11px;font-weight:700;color:var(--ink);white-space:nowrap;
+  pointer-events:none;
+}
+
+/* MAP LEGEND */
 .map-legend{position:absolute;bottom:16px;right:12px;z-index:500;background:white;
-  border-radius:12px;padding:11px 13px;box-shadow:var(--shadow);
+  border-radius:13px;padding:13px 15px;box-shadow:var(--shadow);
   transform:perspective(600px) rotateY(-2deg) rotateX(1.5deg);transition:transform .3s}
-.map-legend:hover{transform:none;box-shadow:0 16px 48px rgba(0,0,0,.12)}
-.leg-title{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
-.leg-row{display:flex;align-items:center;gap:6px;margin-bottom:4px;
-  font-family:'DM Mono',monospace;font-size:9px;color:var(--ink2)}
-.leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.map-legend:hover{transform:none;box-shadow:0 16px 48px rgba(0,0,0,.14)}
+.leg-title{font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink3);margin-bottom:9px;font-weight:700}
+.leg-row{display:flex;align-items:center;gap:7px;margin-bottom:6px;
+  font-size:11px;color:var(--ink2);font-weight:600}
+.leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 </style>
 </head>
 <body>
 
 <header>
   <div>
-    <div class="logo">☢ Radiation World Map</div>
-    <div class="logo-sub">Safecast Live · נקודות עניין מתועדות</div>
+    <div class="logo">☢ מפת קרינה עולמית</div>
+    <div class="logo-sub">נתוני Safecast · נקודות עניין מתועדות</div>
   </div>
-  <div class="live-pill"><div class="live-dot" id="liveDot"></div><span id="liveLabel">LIVE</span></div>
+  <div class="live-pill"><div class="live-dot" id="liveDot"></div><span id="liveLabel">Safecast</span></div>
 </header>
 
 <aside class="panel">
 
-  <!-- Mode -->
   <div class="sec">
     <div class="lbl">מצב תצוגה</div>
     <div class="tabs">
       <button class="tab active" id="tabHot" onclick="setMode('hotspots')">📍 נקודות עניין</button>
-      <button class="tab" id="tabLive" onclick="setMode('live')">📡 Live Data</button>
+      <button class="tab" id="tabLive" onclick="setMode('live')">📡 נתוני Safecast</button>
     </div>
   </div>
 
-  <!-- HOTSPOTS controls -->
+  <!-- HOTSPOT CONTROLS -->
   <div id="hotControls">
     <div class="sec">
-      <div class="lbl">סינון קטגוריה</div>
+      <div class="lbl">סינון</div>
       <div class="chips" id="catChips"></div>
     </div>
     <div class="sec">
-      <div class="lbl">שכבת Safecast</div>
+      <div class="lbl">שכבת Safecast על המפה</div>
       <div class="slider-wrap">
-        <span style="font-size:10px;color:var(--ink3)">כבוי</span>
+        <span style="font-size:11px;color:var(--ink3)">כבוי</span>
         <input type="range" min="0" max="100" value="70" id="opSlider">
         <span class="slider-val" id="opVal">70%</span>
+      </div>
+      <div style="margin-top:8px" class="info-box blue">
+        שכבת הצבעים גלויה בבירור רק באזור יפן (zoom 9+) — שם רוב מדידות Safecast.
       </div>
     </div>
   </div>
 
-  <!-- LIVE controls -->
+  <!-- LIVE CONTROLS -->
   <div id="liveControls" style="display:none">
+    <div class="sec">
+      <div class="info-box yellow">
+        <b>מה זה "נתוני Safecast"?</b><br>
+        מתנדבים ברחבי העולם מדדו קרינה עם גייגר ושלחו למאגר. הנתונים ישנים (2013–2022) — לא בזמן אמת. בחר מיקום וראה אילו מדידות נמצאות שם.
+      </div>
+    </div>
     <div class="sec">
       <div class="lbl">חיפוש מיקום</div>
       <div class="search-row">
@@ -191,16 +212,11 @@ header{grid-area:hdr;display:flex;align-items:center;justify-content:space-betwe
       <div class="chips" id="locChips"></div>
     </div>
     <div class="sec">
-      <div class="lbl">רדיוס</div>
+      <div class="lbl">רדיוס חיפוש</div>
       <div class="chips" id="radChips"></div>
     </div>
-    <div class="sec" style="background:rgba(245,166,35,0.07);border-color:rgba(245,166,35,0.2)">
-      <div style="font-size:10px;color:#9a6800;line-height:1.5;font-family:'DM Mono',monospace">
-        💡 <b>הסבר:</b> Safecast הוא מאגר היסטורי — מתנדבים מדדו עם גייגר ושלחו. הנתונים מ-2013 עד היום, <b>לא</b> בזמן אמת. שכבת הצבע נראית בזום 8+ על יפן.
-      </div>
-    </div>
     <div class="sec">
-      <div class="status-bar" id="statusBar"><span id="sIcon">⏳</span><span id="sMsg">מחכה...</span></div>
+      <div class="status-bar" id="statusBar"><span id="sIcon">⏳</span><span id="sMsg" style="margin-right:6px">מחכה...</span></div>
     </div>
     <div class="sec">
       <div class="stats-grid">
@@ -208,7 +224,7 @@ header{grid-area:hdr;display:flex;align-items:center;justify-content:space-betwe
         <div class="stat-card"><div class="stat-val" id="stAvg">—</div><div class="stat-unit">nSv/h</div><div class="stat-lbl">ממוצע</div></div>
         <div class="stat-card"><div class="stat-val" id="stMax">—</div><div class="stat-unit">nSv/h</div><div class="stat-lbl">מקסימום</div></div>
       </div>
-      <div style="margin-top:9px">
+      <div style="margin-top:10px">
         <div class="gauge-track"><div class="gauge-fill" id="gFill"></div></div>
         <div class="gauge-ticks"><span>0</span><span>250</span><span>500</span><span>750</span><span>1000+</span></div>
         <div class="gauge-row"><div class="gauge-dot" id="gDot"></div><div class="gauge-text" id="gText">מחכה</div></div>
@@ -216,75 +232,125 @@ header{grid-area:hdr;display:flex;align-items:center;justify-content:space-betwe
     </div>
   </div>
 
-  <!-- List -->
   <div class="list-hdr">
     <div class="lbl" style="margin-bottom:0" id="listTitle">נקודות עניין</div>
     <div class="count-badge" id="listCount">0</div>
   </div>
   <div class="list-scroll" id="mainList">
-    <div class="empty"><div class="empty-icon">☢</div><div class="empty-text">טוען...</div></div>
+    <div class="empty">טוען...</div>
   </div>
 </aside>
 
 <div id="map"></div>
 
 <script>
-const PROXY = 'https://safecast-proxy.onrender.com';
+const PROXY='https://safecast-proxy.onrender.com';
 
-// ── HOTSPOTS DATA ──
-const HOTSPOTS = [
-  {id:1,  name:'כור צ׳רנוביל',       country:'אוקראינה', lat:51.389, lng:30.099, nsvh:160000, cat:'disaster', icon:'☢', year:2021, source:'IAEA', note:'ממוצע באתר הכור עצמו.'},
-  {id:2,  name:'יער אדום — צ׳רנוביל',country:'אוקראינה', lat:51.40,  lng:30.05,  nsvh:500000, cat:'disaster', icon:'🌲', year:2020, source:'Ukraine State', note:'אזור הכי מזוהם בעולם.'},
-  {id:3,  name:'פריפיאט',             country:'אוקראינה', lat:51.407, lng:30.054, nsvh:8000,   cat:'disaster', icon:'🏚', year:2019, source:'Safecast', note:'עיר רפאים מ-1986.'},
-  {id:4,  name:'כור פוקושימה',        country:'יפן',      lat:37.421, lng:141.032,nsvh:105000, cat:'disaster', icon:'⚡', year:2022, source:'Safecast/TEPCO', note:'אסון 2011.'},
-  {id:5,  name:'נאמיה — אזור פינוי',  country:'יפן',      lat:37.48,  lng:141.00, nsvh:3500,   cat:'disaster', icon:'🚧', year:2021, source:'Safecast', note:'חלק מהתושבים חזרו.'},
-  {id:6,  name:'טוקיו — שינג׳וקו',   country:'יפן',      lat:35.690, lng:139.700,nsvh:68,     cat:'normal',   icon:'🏙', year:2023, source:'Safecast', note:'חזר לנורמה אחרי 2011.'},
-  {id:7,  name:'קיוטו',               country:'יפן',      lat:35.011, lng:135.768,nsvh:55,     cat:'normal',   icon:'⛩', year:2022, source:'Safecast', note:'מערב יפן — רחוק מפוקושימה.'},
-  {id:8,  name:'פריז',                country:'צרפת',     lat:48.857, lng:2.347,  nsvh:90,     cat:'normal',   icon:'🗼', year:2023, source:'IRSN', note:'70% חשמל גרעיני בצרפת.'},
-  {id:9,  name:'מינכן',               country:'גרמניה',   lat:48.137, lng:11.576, nsvh:120,    cat:'normal',   icon:'🍺', year:2023, source:'BfR', note:'גרמניה סגרה כורים ב-2023.'},
-  {id:10, name:'לונדון',              country:'בריטניה',  lat:51.507, lng:-0.128, nsvh:100,    cat:'normal',   icon:'💂', year:2022, source:'PHE', note:'15 כורים פעילים בבריטניה.'},
-  {id:11, name:'הלסינקי',             country:'פינלנד',   lat:60.192, lng:24.945, nsvh:180,    cat:'normal',   icon:'🇫🇮', year:2023, source:'STUK', note:'גרניט + רדון = גבוה יחסית.'},
-  {id:12, name:'דימונה — סביבות',     country:'ישראל',    lat:30.983, lng:35.148, nsvh:95,     cat:'normal',   icon:'🇮🇱', year:2020, source:'IAEA', note:'קרינת רקע טבעית רגילה.'},
-  {id:13, name:'תל אביב',             country:'ישראל',    lat:32.080, lng:34.780, nsvh:70,     cat:'normal',   icon:'🌊', year:2020, source:'IAEA', note:'נמוכה — חוף הים התיכון.'},
-  {id:14, name:'דנבר, קולורדו',       country:'ארה״ב',    lat:39.739, lng:-104.984,nsvh:320,   cat:'elevated', icon:'🏔', year:2023, source:'EPA', note:'גובה 1600 מ׳ + גרניט.'},
-  {id:15, name:'ניו יורק',            country:'ארה״ב',    lat:40.712, lng:-74.006, nsvh:95,    cat:'normal',   icon:'🗽', year:2023, source:'EPA RadNet', note:'ממוצע עירוני.'},
-  {id:16, name:'אתר ניסויי נבדה',     country:'ארה״ב',    lat:37.12,  lng:-116.05, nsvh:1200,  cat:'elevated', icon:'💥', year:2021, source:'DOE', note:'928 ניסויי גרעין 1951–1992.'},
-  {id:17, name:'ראמסר',               country:'איראן',    lat:36.910, lng:50.658, nsvh:260000, cat:'natural',  icon:'🌋', year:2020, source:'UNSCEAR', note:'הגבוה בעולם בקרינה טבעית!'},
-  {id:18, name:'קרלה, הודו',          country:'הודו',     lat:9.980,  lng:76.330, nsvh:15000,  cat:'natural',  icon:'🏝', year:2019, source:'AERB', note:'חוף עם מינרל מונזייט.'},
-  {id:19, name:'גואראפארי, ברזיל',    country:'ברזיל',    lat:-20.676,lng:-40.502,nsvh:18000,  cat:'natural',  icon:'🌴', year:2021, source:'IAEA', note:'חול מונזייט טבעי.'},
-  {id:20, name:'ISS — תחנת חלל',      country:'חלל',      lat:51.0,   lng:0.0,    nsvh:640000, cat:'space',    icon:'🛸', year:2023, source:'NASA', note:'~200 mSv/שנה לאסטרונאוט.'},
+// ── HOTSPOTS ──
+const HOTSPOTS=[
+  // אסונות גרעיניים
+  {id:1,  name:'כור צ׳רנוביל',        country:'אוקראינה', lat:51.389,  lng:30.099,  nsvh:160000, cat:'disaster', icon:'☢', year:2021, source:'IAEA',           note:'ממוצע באתר הכור עצמו. ערכי שיא ביערות האדומים עשרות מיליונים.'},
+  {id:2,  name:'יער אדום',             country:'אוקראינה', lat:51.402,  lng:30.068,  nsvh:500000, cat:'disaster', icon:'🌲', year:2020, source:'Ukrainian State', note:'העצים הפכו חום-כתום מהקרינה ב-1986. אחד האזורים המזוהמים ביותר.'},
+  {id:3,  name:'פריפיאט',              country:'אוקראינה', lat:51.407,  lng:30.054,  nsvh:8000,   cat:'disaster', icon:'🏚', year:2019, source:'Safecast',        note:'עיר רפאים שפונתה ב-1986. 50,000 תושבים עזבו תוך שעות.'},
+  {id:4,  name:'כור פוקושימה דאיצ׳י', country:'יפן',      lat:37.421,  lng:141.032, nsvh:105000, cat:'disaster', icon:'⚡', year:2022, source:'Safecast/TEPCO',  note:'אסון מרץ 2011 — צונאמי השבית את מערכות הקירור.'},
+  {id:5,  name:'נאמיה — אזור פינוי',  country:'יפן',      lat:37.480,  lng:141.000, nsvh:3500,   cat:'disaster', icon:'🚧', year:2021, source:'Safecast',        note:'פונתה לאחר פוקושימה. חלק מהתושבים חזרו לאחר הורדת הקרינה.'},
+  {id:6,  name:'אוקומה',               country:'יפן',      lat:37.400,  lng:141.020, nsvh:12000,  cat:'disaster', icon:'🏘', year:2020, source:'Safecast',        note:'אחת הערים שפונתה — צמוד לכור. אזור פינוי עד 2019.'},
+
+  // נורמלי — יפן
+  {id:7,  name:'טוקיו',                country:'יפן',      lat:35.690,  lng:139.700, nsvh:68,     cat:'normal',   icon:'🗼', year:2023, source:'Safecast',        note:'חזר לנורמה לאחר 2011. ממוצע עירוני יציב.'},
+  {id:8,  name:'קיוטו',                country:'יפן',      lat:35.011,  lng:135.768, nsvh:55,     cat:'normal',   icon:'⛩', year:2022, source:'Safecast',        note:'מערב יפן — רחוק מהשפעת פוקושימה.'},
+  {id:9,  name:'אוסקה',                country:'יפן',      lat:34.693,  lng:135.502, nsvh:52,     cat:'normal',   icon:'🏙', year:2022, source:'Safecast',        note:'ממוצע עירוני נמוך.'},
+  {id:10, name:'סאפורו',               country:'יפן',      lat:43.061,  lng:141.354, nsvh:60,     cat:'normal',   icon:'❄', year:2022, source:'Safecast',        note:'איי הוקאידו — רחוק מפוקושימה.'},
+
+  // אירופה
+  {id:11, name:'פריז',                 country:'צרפת',     lat:48.857,  lng:2.347,   nsvh:90,     cat:'normal',   icon:'🗼', year:2023, source:'IRSN',           note:'~70% מחשמל צרפת מאנרגיה גרעינית — ללא תאונות.'},
+  {id:12, name:'מרסיי',                country:'צרפת',     lat:43.296,  lng:5.381,   nsvh:85,     cat:'normal',   icon:'⚓', year:2022, source:'IRSN',           note:'חוף הים התיכון. קרינה נמוכה.'},
+  {id:13, name:'לונדון',               country:'בריטניה',  lat:51.507,  lng:-0.128,  nsvh:100,    cat:'normal',   icon:'💂', year:2022, source:'PHE',            note:'15 כורים גרעיניים פעילים בבריטניה.'},
+  {id:14, name:'מינכן',                country:'גרמניה',   lat:48.137,  lng:11.576,  nsvh:120,    cat:'normal',   icon:'🍺', year:2023, source:'BfR',            note:'גרמניה סגרה את כל כוריה ב-2023.'},
+  {id:15, name:'ברלין',                country:'גרמניה',   lat:52.520,  lng:13.405,  nsvh:110,    cat:'normal',   icon:'🐻', year:2023, source:'BfR',            note:'נמוך ויציב.'},
+  {id:16, name:'מדריד',                country:'ספרד',     lat:40.416,  lng:-3.704,  nsvh:95,     cat:'normal',   icon:'🐂', year:2023, source:'CSN',            note:'9 כורים פעילים בספרד.'},
+  {id:17, name:'רומא',                 country:'איטליה',   lat:41.902,  lng:12.496,  nsvh:80,     cat:'normal',   icon:'🏛', year:2022, source:'ISPRA',          note:'איטליה ללא כורים גרעיניים מאז 1990.'},
+  {id:18, name:'ורשה',                 country:'פולין',    lat:52.230,  lng:21.010,  nsvh:130,    cat:'normal',   icon:'🦅', year:2023, source:'PAA',            note:'פולין בונה את הכור הגרעיני הראשון שלה.'},
+  {id:19, name:'ויינה',                country:'אוסטריה',  lat:48.208,  lng:16.373,  nsvh:85,     cat:'normal',   icon:'🎶', year:2023, source:'ZAMG',           note:'אוסטריה אסרה בחוק (1978) על אנרגיה גרעינית.'},
+  {id:20, name:'בודפשט',               country:'הונגריה',  lat:47.497,  lng:19.040,  nsvh:115,    cat:'normal',   icon:'🌉', year:2023, source:'OAH',            note:'הונגריה מפעילה 4 כורים גרעיניים.'},
+  {id:21, name:'ברגן',                 country:'נורווגיה',  lat:60.392,  lng:5.324,   nsvh:160,    cat:'normal',   icon:'⛵', year:2022, source:'NRPA',           note:'סלע גרניטי = רדון טבעי גבוה יחסית.'},
+  {id:22, name:'הלסינקי',              country:'פינלנד',   lat:60.192,  lng:24.945,  nsvh:180,    cat:'normal',   icon:'🇫🇮', year:2023, source:'STUK',          note:'גרניט + רדון = גבוה יחסית. 2 כורים בלוביילה.'},
+  {id:23, name:'שטוקהולם',             country:'שוודיה',   lat:59.330,  lng:18.069,  nsvh:140,    cat:'normal',   icon:'👑', year:2023, source:'SSM',            note:'שוודיה עם 6 כורים פעילים.'},
+  {id:24, name:'זינובייבסק',           country:'אוקראינה', lat:48.507,  lng:32.262,  nsvh:95,     cat:'normal',   icon:'🔆', year:2022, source:'SNRIU',          note:'ליד תחנת הכוח גרעינית הגדולה בעולם — זפוריז׳יה.'},
+  {id:25, name:'זפוריז׳יה',            country:'אוקראינה', lat:47.838,  lng:35.139,  nsvh:210,    cat:'elevated', icon:'⚠', year:2023, source:'IAEA',            note:'תחנת הכוח הגדולה בעולם (6 כורים) — נמצאת בשטח כיבוש.'},
+  {id:26, name:'סלאפיל — ליד צ׳רנוביל',country:'בלרוס',  lat:51.838,  lng:30.511,  nsvh:4500,   cat:'disaster', icon:'🌿', year:2020, source:'IAEA',            note:'בלרוס קיבלה ~70% מהנשורת של צ׳רנוביל.'},
+
+  // ישראל ואזור
+  {id:27, name:'תל אביב',              country:'ישראל',    lat:32.080,  lng:34.780,  nsvh:70,     cat:'normal',   icon:'🌊', year:2020, source:'IAEA',           note:'נמוך — חוף הים התיכון, גובה פני הים.'},
+  {id:28, name:'ירושלים',              country:'ישראל',    lat:31.769,  lng:35.216,  nsvh:95,     cat:'normal',   icon:'🕍', year:2020, source:'IAEA',           note:'גבוה מת״א בגלל גובה (800 מ׳).'},
+  {id:29, name:'דימונה — סביבות',      country:'ישראל',    lat:30.983,  lng:35.148,  nsvh:95,     cat:'normal',   icon:'🔵', year:2020, source:'IAEA',           note:'קרינת רקע טבעית — לא גבוהה מהממוצע.'},
+  {id:30, name:'חיפה',                 country:'ישראל',    lat:32.794,  lng:34.989,  nsvh:75,     cat:'normal',   icon:'⛵', year:2020, source:'IAEA',           note:'נמוך. חוף הים.'},
+  {id:31, name:'ביידה — ירדן',         country:'ירדן',     lat:29.534,  lng:35.006,  nsvh:80,     cat:'normal',   icon:'🏜', year:2021, source:'JNRC',           note:'ירדן בונה תוכנית גרעינית אזרחית.'},
+
+  // ארה״ב
+  {id:32, name:'ניו יורק',             country:'ארה״ב',    lat:40.712,  lng:-74.006, nsvh:95,     cat:'normal',   icon:'🗽', year:2023, source:'EPA RadNet',      note:'ממוצע עירוני, גובה פני הים.'},
+  {id:33, name:'לוס אנג׳לס',          country:'ארה״ב',    lat:34.052,  lng:-118.244,nsvh:90,     cat:'normal',   icon:'🎬', year:2023, source:'EPA RadNet',      note:'ממוצע עירוני.'},
+  {id:34, name:'שיקגו',                country:'ארה״ב',    lat:41.878,  lng:-87.630, nsvh:100,    cat:'normal',   icon:'🌬', year:2023, source:'EPA RadNet',      note:'ממוצע עירוני.'},
+  {id:35, name:'דנבר, קולורדו',        country:'ארה״ב',    lat:39.739,  lng:-104.984,nsvh:320,    cat:'elevated', icon:'🏔', year:2023, source:'EPA RadNet',      note:'גובה 1600 מ׳ + גרניט = גבוה טבעית. תושבים בריאים לחלוטין.'},
+  {id:36, name:'סולט לייק סיטי',       country:'ארה״ב',    lat:40.760,  lng:-111.891,nsvh:280,    cat:'elevated', icon:'🏔', year:2023, source:'EPA',            note:'גובה 1300 מ׳ + סלע גרניטי.'},
+  {id:37, name:'אתר ניסויי נבדה',      country:'ארה״ב',    lat:37.120,  lng:-116.050,nsvh:1200,   cat:'elevated', icon:'💥', year:2021, source:'DOE/NNSA',       note:'928 ניסויי גרעין בין 1951–1992. ניטור שוטף של DOE.'},
+  {id:38, name:'הנפורד, וושינגטון',    country:'ארה״ב',    lat:46.551,  lng:-119.488,nsvh:850,    cat:'elevated', icon:'⚗', year:2022, source:'DOE',            note:'אתר ייצור פלוטוניום לנשק גרעיני (מנהטן פרויקט). ניקוי נמשך.'},
+  {id:39, name:'סנטה פה, ניו מקסיקו', country:'ארה״ב',    lat:35.687,  lng:-105.938,nsvh:340,    cat:'elevated', icon:'🎨', year:2023, source:'EPA',            note:'גובה 2100 מ׳. גבוה טבעית.'},
+
+  // קרינה טבעית גבוהה
+  {id:40, name:'ראמסר',                country:'איראן',    lat:36.910,  lng:50.658,  nsvh:260000, cat:'natural',  icon:'🌋', year:2020, source:'UNSCEAR',        note:'הגבוה ביותר בעולם מקרינה טבעית! מי תהום עשירים ברדיום. מחקרים: תושבים בריאים.'},
+  {id:41, name:'קרלה',                 country:'הודו',     lat:9.980,   lng:76.330,  nsvh:15000,  cat:'natural',  icon:'🏝', year:2019, source:'AERB',           note:'חוף עם מינרל מונזייט. אוכלוסייה גדולה חיה שם דורות.'},
+  {id:42, name:'גואראפארי',            country:'ברזיל',    lat:-20.676, lng:-40.502, nsvh:18000,  cat:'natural',  icon:'🌴', year:2021, source:'IAEA',           note:'חוף ים עם חול מונזייט. אחד הגבוהים בעולם.'},
+  {id:43, name:'פוצ׳ון',               country:'סין',      lat:29.490,  lng:106.560, nsvh:3500,   cat:'natural',  icon:'🐼', year:2019, source:'CAEA',           note:'אזור עם פצרוזיט — מינרל רדיואקטיבי טבעי.'},
+  {id:44, name:'מחוז גאנגנו',          country:'סין',      lat:24.210,  lng:108.970, nsvh:6800,   cat:'natural',  icon:'🏞', year:2020, source:'CAEA',           note:'אבן גרניט עשירה בחמרים רדיואקטיביים טבעיים.'},
+
+  // שאר העולם
+  {id:45, name:'מוסקבה',               country:'רוסיה',    lat:55.755,  lng:37.617,  nsvh:130,    cat:'normal',   icon:'🏰', year:2022, source:'Rosatom',        note:'רוסיה עם 37 כורים גרעיניים — הצי הגדול בעולם.'},
+  {id:46, name:'טורינסק',              country:'רוסיה',    lat:58.040,  lng:68.010,  nsvh:920,    cat:'elevated', icon:'⚗', year:2021, source:'Rosatom',        note:'אתר מחזור דלק גרעיני — מוגבר מעט.'},
+  {id:47, name:'שנגחאי',               country:'סין',      lat:31.228,  lng:121.474, nsvh:80,     cat:'normal',   icon:'🏙', year:2022, source:'CAEA',           note:'סין בונה יותר כורים גרעיניים מכל מדינה אחרת כיום.'},
+  {id:48, name:'בייג׳ינג',             country:'סין',      lat:39.905,  lng:116.391, nsvh:90,     cat:'normal',   icon:'🏯', year:2022, source:'CAEA',           note:'ממוצע עירוני.'},
+  {id:49, name:'מומבאי',               country:'הודו',     lat:18.975,  lng:72.826,  nsvh:110,    cat:'normal',   icon:'🎬', year:2022, source:'AERB',           note:'הודו עם 22 כורים גרעיניים.'},
+  {id:50, name:'ISS — תחנת חלל',       country:'חלל',      lat:20.000,  lng:10.000,  nsvh:640000, cat:'space',    icon:'🛸', year:2023, source:'NASA',           note:'אסטרונאוטים מקבלים ~200 mSv לשנה — פי 200 מאדם על הקרקע.'},
+  {id:51, name:'סאו פאולו',            country:'ברזיל',    lat:-23.550, lng:-46.633, nsvh:90,     cat:'normal',   icon:'🌆', year:2022, source:'CNEN',           note:'ממוצע עירוני.'},
+  {id:52, name:'קייפטאון',             country:'דרום אפריקה',lat:-33.924,lng:18.424, nsvh:75,     cat:'normal',   icon:'🌊', year:2022, source:'NNR',            note:'דרום אפריקה — מדינה אפריקאית יחידה עם כורים גרעיניים.'},
+  {id:53, name:'סידני',                country:'אוסטרליה', lat:-33.868, lng:151.210, nsvh:85,     cat:'normal',   icon:'🦘', year:2022, source:'ARPANSA',        note:'אוסטרליה ללא כורים מסחריים.'},
+  {id:54, name:'טורונטו',              country:'קנדה',     lat:43.651,  lng:-79.347, nsvh:100,    cat:'normal',   icon:'🍁', year:2023, source:'CNSC',           note:'קנדה עם 19 כורים גרעיניים.'},
+  {id:55, name:'בואנוס איירס',         country:'ארגנטינה', lat:-34.603, lng:-58.381, nsvh:85,     cat:'normal',   icon:'🥩', year:2022, source:'ARN',            note:'ארגנטינה — מדינה ל״א עם תוכנית גרעינית עצמאית.'},
 ];
 
 const CATS=[
-  {id:'all',label:'הכל',color:'#1A1916'},
-  {id:'normal',label:'נורמלי',color:'#5DB87A'},
-  {id:'elevated',label:'מוגבר',color:'#F5A623'},
-  {id:'disaster',label:'אסון',color:'#E8413B'},
-  {id:'natural',label:'טבעי גבוה',color:'#7B2FBE'},
-  {id:'space',label:'חלל',color:'#2563EB'},
+  {id:'all',     label:'הכל',        color:'#1A1916'},
+  {id:'normal',  label:'נורמלי',     color:'#5DB87A'},
+  {id:'elevated',label:'מוגבר',      color:'#F5A623'},
+  {id:'disaster',label:'אסון',       color:'#E8413B'},
+  {id:'natural', label:'טבעי גבוה', color:'#7B2FBE'},
+  {id:'space',   label:'חלל',        color:'#2563EB'},
 ];
 const CAT_COL={normal:'#5DB87A',elevated:'#F5A623',disaster:'#E8413B',natural:'#7B2FBE',space:'#2563EB'};
+
 const QUICK_LOCS=[
   {name:'פוקושימה',lat:37.42,lng:141.03},
-  {name:'טוקיו',lat:35.68,lng:139.76},
-  {name:'פריז',lat:48.85,lng:2.35},
-  {name:'ניו יורק',lat:40.71,lng:-74.01},
+  {name:'טוקיו',   lat:35.68,lng:139.76},
   {name:'צ׳רנוביל',lat:51.39,lng:30.10},
+  {name:'פריז',    lat:48.85,lng:2.35},
+  {name:'לונדון',  lat:51.51,lng:-0.13},
+  {name:'ברלין',   lat:52.52,lng:13.40},
+  {name:'ניו יורק',lat:40.71,lng:-74.01},
+  {name:'דנבר',    lat:39.74,lng:-104.98},
 ];
 const RADII=[50,100,200,500];
 
-// ── STATE ──
-let mode='hotspots';
-let currentCat='all';
-let currentRadius=100;
+// STATE
+let mode='hotspots', currentCat='all', currentRadius=100;
 let currentLat=37.42, currentLng=141.03;
-let hotMarkers={}, liveMarkers=[];
-let selectedHot=null;
+let hotMarkers={}, liveMarkers=[], selectedHot=null;
 
-// ── MAP ──
-const map=L.map('map',{zoomControl:true,attributionControl:false}).setView([35,20],3);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:18,subdomains:'abcd'}).addTo(map);
-L.control.attribution({prefix:false,position:'bottomleft'}).addAttribution('© OpenStreetMap | Safecast').addTo(map);
+// MAP
+const map=L.map('map',{zoomControl:true,attributionControl:false}).setView([25,15],3);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+  {maxZoom:18,subdomains:'abcd'}).addTo(map);
+L.control.attribution({prefix:false,position:'bottomleft'})
+  .addAttribution('© OpenStreetMap | Safecast').addTo(map);
 
 const scLayer=L.tileLayer('https://tilecache.safecast.org/v1/tiles/{z}/{x}/{y}.png',{
   maxZoom:18,opacity:.70,
@@ -303,27 +369,34 @@ map.on('click',e=>{
 // Legend
 const legEl=document.createElement('div');
 legEl.className='map-legend';
-legEl.innerHTML=`<div class="leg-title">Safecast — קרינה</div>
-<div class="leg-row"><div class="leg-dot" style="background:#42C5F4"></div>נמוך</div>
-<div class="leg-row"><div class="leg-dot" style="background:#5DB87A"></div>נורמלי</div>
-<div class="leg-row"><div class="leg-dot" style="background:#F5A623"></div>מוגבר</div>
-<div class="leg-row"><div class="leg-dot" style="background:#E8413B"></div>גבוה</div>
-<div class="leg-row"><div class="leg-dot" style="background:#7B2FBE"></div>קיצוני</div>`;
+legEl.innerHTML=`<div class="leg-title">Safecast — רמות קרינה</div>
+<div class="leg-row"><div class="leg-dot" style="background:#42C5F4;box-shadow:0 0 5px #42C5F4"></div>נמוך מאוד</div>
+<div class="leg-row"><div class="leg-dot" style="background:#5DB87A;box-shadow:0 0 5px #5DB87A"></div>נורמלי</div>
+<div class="leg-row"><div class="leg-dot" style="background:#F5A623;box-shadow:0 0 5px #F5A623"></div>מוגבר</div>
+<div class="leg-row"><div class="leg-dot" style="background:#E8413B;box-shadow:0 0 5px #E8413B"></div>גבוה</div>
+<div class="leg-row"><div class="leg-dot" style="background:#7B2FBE;box-shadow:0 0 5px #7B2FBE"></div>קיצוני</div>`;
 document.getElementById('map').appendChild(legEl);
 
-// ── UTILS ──
+// UTILS
 function cpmToNSvH(v){return Math.round(parseFloat(v)*9.55)}
 function getColor(n){return n<200?'#5DB87A':n<600?'#F5A623':n<10000?'#E8413B':'#7B2FBE'}
 function getLabel(n){return n<200?'רמה נורמלית':n<600?'רמה מוגברת':n<10000?'רמה גבוהה':'רמה קיצונית'}
 function fmtDate(s){if(!s)return'—';try{return new Date(s).toLocaleDateString('he-IL',{day:'2-digit',month:'2-digit',year:'2-digit'})}catch{return'—'}}
-function compare(n){
-  const lines=[];
-  if(n<100)lines.push('✓ מתחת לממוצע עולמי (~100)');
-  else if(n<350)lines.push('✓ בטווח נורמלי (50–350)');
-  const x=Math.round(70000/Math.max(n,1));
-  if(x<5000)lines.push('≈ '+x+'× פחות מצילום שיניים');
-  return lines.join(' · ');
+
+function xrayCompare(nsvh){
+  // Dental X-ray = 70,000 nSv total dose (one-time)
+  // Compare: how many hours at this level = one dental X-ray?
+  const xrayDose=70000;
+  if(nsvh<=0)return'';
+  const hoursPerXray=(xrayDose/nsvh).toFixed(1);
+  const xraysPerHour=(nsvh/xrayDose).toFixed(2);
+  if(nsvh<xrayDose){
+    return`⚡ צילום שיניים אחד = ${hoursPerXray} שעות חשיפה לרמה זו`;
+  } else {
+    return`⚡ שעה אחת ברמה זו ≈ ${xraysPerHour} צילומי שיניים`;
+  }
 }
+
 function setStatus(icon,msg,cls){
   document.getElementById('statusBar').className='status-bar '+(cls||'');
   document.getElementById('sIcon').textContent=icon;
@@ -332,77 +405,88 @@ function setStatus(icon,msg,cls){
     cls==='ok'?'#5DB87A':cls==='err'?'#E8413B':'#F5A623';
 }
 
-// ── MODE SWITCH ──
+// MODE SWITCH
 function setMode(m){
   mode=m;
   document.getElementById('tabHot').className='tab'+(m==='hotspots'?' active':'');
   document.getElementById('tabLive').className='tab'+(m==='live'?' active':'');
   document.getElementById('hotControls').style.display=m==='hotspots'?'block':'none';
   document.getElementById('liveControls').style.display=m==='live'?'block':'none';
-  document.getElementById('listTitle').textContent=m==='hotspots'?'נקודות עניין':'מדידות חיות';
+  document.getElementById('listTitle').textContent=m==='hotspots'?'נקודות עניין':'מדידות Safecast';
   if(m==='hotspots'){
     clearLiveMarkers();
     renderHotspots();
     buildHotList();
-    map.setView([35,20],3);
+    map.setView([25,15],3);
   } else {
-    // In live mode: show hotspot markers as faded background layer
-    renderHotspots(true);
+    renderHotspots(true); // faded in background
     buildLocChips();
     buildRadChips();
-    map.setView([currentLat,currentLng],9);
+    map.flyTo([currentLat,currentLng],10,{duration:1.5});
     loadLive();
   }
 }
 
-// ── HOTSPOTS MODE ──
+// HOTSPOTS
 function renderHotspots(faded){
   clearHotMarkers();
   const filtered=currentCat==='all'?HOTSPOTS:HOTSPOTS.filter(h=>h.cat===currentCat);
   filtered.forEach(h=>{
-    if(h.lat===51.0&&h.lng===0.0)return;
+    if(h.lat===20&&h.lng===10)return; // ISS skip
     const c=CAT_COL[h.cat]||'#1A1916';
-    const sz=faded?10:(h.nsvh>10000?16:12);
-    const opacity=faded?0.35:1;
+    // Size by severity — MUCH bigger for visibility
+    const sz=faded?10:(h.nsvh>100000?28:h.nsvh>10000?22:h.nsvh>1000?18:14);
+    const pulse=!faded&&h.nsvh>50000?
+      `animation:pulse-marker 2s ease-in-out infinite;`:'';
     const icon=L.divIcon({
       className:'',
       html:`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:${c};
-        border:2px solid white;opacity:${opacity};
-        box-shadow:0 0 6px ${c},0 2px 5px rgba(0,0,0,.15);cursor:pointer"></div>`,
+        border:${faded?'1.5':'3'}px solid white;opacity:${faded?0.3:1};
+        box-shadow:0 0 ${faded?4:12}px ${c},0 2px 8px rgba(0,0,0,.25);
+        cursor:pointer;${pulse}"></div>`,
       iconSize:[sz,sz],iconAnchor:[sz/2,sz/2]
     });
     const m=L.marker([h.lat,h.lng],{icon})
-      .bindPopup(makeHotPopup(h),{maxWidth:260})
+      .bindPopup(makeHotPopup(h),{maxWidth:300})
       .on('click',()=>selectHot(h.id))
       .addTo(map);
     hotMarkers[h.id]=m;
   });
-  document.getElementById('listCount').textContent=filtered.length;
+  if(!faded)document.getElementById('listCount').textContent=filtered.length;
 }
 function clearHotMarkers(){Object.values(hotMarkers).forEach(m=>map.removeLayer(m));hotMarkers={};}
+
 function makeHotPopup(h){
   const c=getColor(h.nsvh);
+  const xray=xrayCompare(h.nsvh);
   return`<div class="pu">
-    <div class="pu-name">${h.icon} ${h.name} · ${h.country}</div>
+    <div class="pu-name">${h.icon} ${h.name}</div>
     <div class="pu-val">${h.nsvh.toLocaleString()}</div>
-    <div class="pu-unit">nSv/h</div>
+    <div class="pu-unit">nSv לשעה</div>
     <div class="pu-div"></div>
-    <div class="pu-meta"><div>📅 ${h.year} · 📡 ${h.source}</div></div>
+    <div class="pu-meta">
+      <div>🌍 ${h.country}</div>
+      <div>📅 מדידה: ${h.year}</div>
+      <div>📡 מקור: ${h.source}</div>
+    </div>
     <div class="pu-badge" style="background:${c}18;color:${c}">${getLabel(h.nsvh)}</div>
+    ${xray?`<div class="pu-compare">${xray}</div>`:''}
     <div class="pu-note">${h.note}</div>
-    <div class="pu-note" style="margin-top:5px;color:var(--ink2)">${compare(h.nsvh)}</div>
   </div>`;
 }
+
 function selectHot(id){
   selectedHot=id;
   document.querySelectorAll('.m-item').forEach(el=>el.classList.toggle('sel',el.dataset.id==id));
 }
 function jumpToHot(id){
   const h=HOTSPOTS.find(x=>x.id===id);
-  if(!h||!hotMarkers[id])return;
+  if(!h)return;
   selectHot(id);
-  map.flyTo([h.lat,h.lng],10,{duration:1.5});
-  setTimeout(()=>hotMarkers[id].openPopup(),1600);
+  if(h.lat===20&&h.lng===10){return;} // ISS
+  if(!hotMarkers[id])return;
+  map.flyTo([h.lat,h.lng],10,{duration:1.2});
+  setTimeout(()=>hotMarkers[id].openPopup(),1300);
 }
 function buildHotList(){
   const filtered=currentCat==='all'?HOTSPOTS:HOTSPOTS.filter(h=>h.cat===currentCat);
@@ -433,7 +517,7 @@ function setCat(cat,el){
   buildHotList();
 }
 
-// ── LIVE MODE ──
+// LIVE
 function clearLiveMarkers(){liveMarkers.forEach(m=>map.removeLayer(m));liveMarkers=[];}
 function buildLocChips(){
   document.getElementById('locChips').innerHTML=QUICK_LOCS.map((l,i)=>
@@ -449,7 +533,7 @@ function selectLoc(lat,lng,el){
   currentLat=lat;currentLng=lng;
   document.querySelectorAll('#locChips .chip').forEach(c=>c.classList.remove('active'));
   el.classList.add('active');
-  map.flyTo([lat,lng],10,{duration:1.2});
+  map.flyTo([lat,lng],10,{duration:1});
   loadLive();
 }
 function setRadius(r,el){
@@ -470,7 +554,7 @@ async function loadLive(){
     clearTimeout(t);
     if(!res.ok)throw new Error('HTTP '+res.status);
     const raw=await res.json();
-    if(!Array.isArray(raw)||raw.length===0)throw new Error('אין מדידות באזור זה');
+    if(!Array.isArray(raw)||!raw.length)throw new Error('אין מדידות באזור זה');
     const pts=raw.filter(d=>d.value&&d.latitude&&d.longitude).map(d=>({
       id:d.id,nsvh:cpmToNSvH(d.value),raw:d.value,
       lat:parseFloat(d.latitude),lng:parseFloat(d.longitude),
@@ -480,7 +564,8 @@ async function loadLive(){
   }catch(e){
     setStatus('✗',e.message,'err');
     document.getElementById('mainList').innerHTML=
-      `<div class="empty"><div class="empty-icon">☢</div><div class="empty-text">${e.message}<br><button class="btn" style="margin-top:10px" onclick="loadLive()">נסה שוב</button></div></div>`;
+      `<div class="empty">${e.message}<br><br>
+        <button class="btn" onclick="loadLive()">נסה שוב</button></div>`;
     document.getElementById('listCount').textContent='0';
   }
 }
@@ -503,44 +588,48 @@ function renderLive(pts){
   document.getElementById('gFill').style.background=col;
   document.getElementById('gDot').style.background=col;
   document.getElementById('gText').textContent=getLabel(avg)+' — '+avg.toLocaleString()+' nSv/h';
-  setStatus('✓',pts.length+' מדידות נטענו','ok');
+  setStatus('✓',pts.length+' מדידות ('+new Date(pts[0]?.date||0).getFullYear()+'–'+new Date(pts[pts.length-1]?.date||0).getFullYear()+')','ok');
   document.getElementById('listCount').textContent=pts.length;
-
   pts.forEach(p=>{
     if(isNaN(p.lat)||isNaN(p.lng))return;
     const c=getColor(p.nsvh);
+    const sz=p.nsvh>10000?18:p.nsvh>1000?14:11;
     const icon=L.divIcon({
       className:'',
-      html:`<div style="width:11px;height:11px;border-radius:50%;background:${c};
+      html:`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:${c};
         border:2px solid white;box-shadow:0 0 6px ${c},0 2px 5px rgba(0,0,0,.2)"></div>`,
-      iconSize:[11,11],iconAnchor:[5.5,5.5]
+      iconSize:[sz,sz],iconAnchor:[sz/2,sz/2]
     });
+    const xray=xrayCompare(p.nsvh);
     const m=L.marker([p.lat,p.lng],{icon})
       .bindPopup(`<div class="pu">
         <div class="pu-val">${p.nsvh.toLocaleString()}</div>
-        <div class="pu-unit">nSv/h · ${parseFloat(p.raw).toFixed(1)} CPM</div>
+        <div class="pu-unit">nSv לשעה · ${parseFloat(p.raw).toFixed(1)} CPM</div>
         <div class="pu-div"></div>
-        <div class="pu-meta"><div>📍 ${p.lat.toFixed(4)}, ${p.lng.toFixed(4)}</div>
-          <div>📅 ${fmtDate(p.date)}</div>${p.device?'<div>📡 Device #'+p.device+'</div>':''}</div>
-        <div class="pu-badge" style="background:${getColor(p.nsvh)}18;color:${getColor(p.nsvh)}">${getLabel(p.nsvh)}</div>
-      </div>`,{maxWidth:220})
+        <div class="pu-meta">
+          <div>📍 ${p.lat.toFixed(4)}, ${p.lng.toFixed(4)}</div>
+          <div>📅 ${fmtDate(p.date)}</div>
+          ${p.device?'<div>📡 Device #'+p.device+'</div>':''}
+        </div>
+        <div class="pu-badge" style="background:${c}18;color:${c}">${getLabel(p.nsvh)}</div>
+        ${xray?`<div class="pu-compare">${xray}</div>`:''}
+      </div>`,{maxWidth:280})
       .addTo(map);
     liveMarkers.push(m);
   });
-
   const sorted=[...pts].sort((a,b)=>new Date(b.date)-new Date(a.date));
   document.getElementById('mainList').innerHTML=sorted.slice(0,80).map(p=>
     `<div class="m-item" onclick="map.flyTo([${p.lat},${p.lng}],13,{duration:1})">
-      <div class="m-icon" style="background:${getColor(p.nsvh)}18;font-size:10px">☢</div>
+      <div class="m-icon" style="background:${getColor(p.nsvh)}18">☢</div>
       <div style="flex:1;min-width:0">
-        <div class="m-val" style="color:${getColor(p.nsvh)}">${p.nsvh.toLocaleString()} <span style="font-size:9px;color:var(--ink3)">nSv/h</span></div>
+        <div class="m-val" style="color:${getColor(p.nsvh)}">${p.nsvh.toLocaleString()} nSv/h</div>
         <div class="m-sub">${p.lat.toFixed(3)}, ${p.lng.toFixed(3)}</div>
       </div>
       <div class="m-date">${fmtDate(p.date)}</div>
     </div>`).join('');
 }
 
-// ── SEARCH ──
+// SEARCH
 async function searchLocation(){
   const q=document.getElementById('searchInput').value.trim();
   if(!q)return;
@@ -550,7 +639,7 @@ async function searchLocation(){
     const data=await res.json();
     if(data&&data[0]){
       currentLat=parseFloat(data[0].lat);currentLng=parseFloat(data[0].lon);
-      map.setView([currentLat,currentLng],8);
+      map.flyTo([currentLat,currentLng],9,{duration:1});
       loadLive();
     }else setStatus('✗','מיקום לא נמצא','err');
   }catch(e){setStatus('✗','שגיאת חיפוש','err')}
@@ -560,16 +649,21 @@ function useMyLocation(){
   if(!navigator.geolocation)return;
   navigator.geolocation.getCurrentPosition(pos=>{
     currentLat=pos.coords.latitude;currentLng=pos.coords.longitude;
-    map.setView([currentLat,currentLng],9);
+    map.flyTo([currentLat,currentLng],9,{duration:1});
     loadLive();
   });
 }
 
-// ── INIT ──
+// CSS pulse animation
+const style=document.createElement('style');
+style.textContent=`@keyframes pulse-marker{0%,100%{transform:scale(1);box-shadow:0 0 12px currentColor}50%{transform:scale(1.15);box-shadow:0 0 24px currentColor}}`;
+document.head.appendChild(style);
+
+// INIT
 buildCatChips();
 renderHotspots();
 buildHotList();
-setTimeout(()=>jumpToHot(4),600);
+setTimeout(()=>jumpToHot(4),400);
 </script>
 </body>
 </html>
